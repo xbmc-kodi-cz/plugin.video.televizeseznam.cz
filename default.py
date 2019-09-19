@@ -414,9 +414,7 @@ def videoLink(url):
         video_url = url[u'data'][u"mp4"][stream_quality][u"url"][3:]
 
     stream_url = '/'.join(link[0:5])+'/'+video_url
-    
-    logDbg(stream_url)
-    
+
     liz = xbmcgui.ListItem()
     liz = xbmcgui.ListItem(path=stream_url)  
     liz.setInfo( type="Video", infoLabels={ "Title": name, "Plot": perex})
