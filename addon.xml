@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="plugin.video.televizeseznam.cz"           
+       name="TelevizeSeznam.cz"
+       version="1.0.0"
+       provider-name="wombat">
+  <requires>
+    <import addon="xbmc.python" version="2.1.0"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource" library="default.py">
+    <provides>video</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <platform>all</platform>
+    <summary>TelevizeSeznam.cz</summary>
+    <description>
+        Internetová televize TelevizeSeznam.cz plná desítek originálních pořadů, videí seriálů, které si pustíte, kdy chcete vy Online a offline v aplikaci.
+    </description>
+    <source>https://github.com/lama18/plugin.video.televizeseznam.cz</source>
+  </extension>
+</addon>
