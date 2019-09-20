@@ -10,7 +10,6 @@ from datetime import datetime
 from client import GraphQLClient
 
 _apiurl = 'https://api.televizeseznam.cz/graphql'
-_useragent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36'
 
 _addon = xbmcaddon.Addon('plugin.video.televizeseznam.cz')
 _lang = _addon.getLocalizedString
@@ -19,7 +18,9 @@ MODE_LIST_SHOWS = 1
 MODE_LIST_CHANNELS = 2
 MODE_LIST_CATEGORIES = 3
 MODE_LIST_EPISODES = 4
-MODE_LIST_EPISODES_LATEST = 5
+MODE_LIST_PLAYLIST_EPISODES = 5
+MODE_LIST_CHANNEL_EPISODES_LATEST = 6
+MODE_LIST_EPISODES_LATEST = 7
 MODE_VIDEOLINK = 10
 
 def log(msg, level=xbmc.LOGDEBUG):
@@ -34,9 +35,9 @@ def logErr(msg):
     log(msg,level=xbmc.LOGERROR)
 
 def listContent():
-    addDir(_lang(30002), 'ListLatest', MODE_LIST_EPISODES_LATEST, '')
-    addDir(_lang(30003), 'ListShowLatest', MODE_LIST_SHOWS, '')
-    addDir(_lang(30004), 'listCategories', MODE_LIST_CATEGORIES, '')
+    addDir(_lang(30002), { "urlid": "ListShowLatest", "url": "ListShowLatest" }, MODE_LIST_EPISODES_LATEST, '')
+    addDir(_lang(30003), { "urlid": "ListShowLatest", "url": "ListShowLatest" }, MODE_LIST_SHOWS, '')
+    addDir(_lang(30004), { "urlid": "ListShowLatest", "url": "listCategories" }, MODE_LIST_CATEGORIES, '')
 
 def listCategories():    
     client = GraphQLClient(_apiurl)
@@ -52,7 +53,7 @@ def listCategories():
 	''', params)
         
     for item in data[u'data'][u'tags']:
-        link = item[u'id']
+        link = { "urlid": item[u'id'], "url": item[u'urlName'] }
         name = item[u'name']
         addDir(name, link, MODE_LIST_CHANNELS, '')
         
@@ -92,17 +93,19 @@ def listShows():
 	''', params)
 
     for item in data[u'data'][u'tags']:
+        link = { "urlid": item[u'id'], "url": item[u'urlName'] }
         name = item[u'name']
         for images in item[u'images']:
             image = 'https:'+images[u'url'] 
         if item[u'category'] == 'service':
-            addDir(name, item[u'id'], MODE_LIST_CHANNELS, image)
+            addDir(name, link, MODE_LIST_CHANNELS, image)
         else:
-            addDir(name, item[u'urlName'], MODE_LIST_EPISODES, image)
+            addDir(name, link, MODE_LIST_EPISODES, image)
 
-def listChannels(url):
+def listChannels(urlid, url):
     client = GraphQLClient(_apiurl)
-    params = { "id": url, "childTagsConnectionFirst": 500, "childTagsConnectionCategories": ["show","tag"] }
+    logDbg(urlid)
+    params = { "id": urlid, "childTagsConnectionFirst": 500, "childTagsConnectionCategories": ["show","tag"] }
 
     data = client.execute('''query LoadChildTags($id : ID, $childTagsConnectionFirst : Int, $childTagsConnectionCategories : [Category]){ tag(id: $id){ childTagsConnection(categories: $childTagsConnectionCategories,first : $childTagsConnectionFirst) { ...TagCardsFragmentOnTagConnection  } } }
 		fragment TagCardsFragmentOnTagConnection on TagConnection {
@@ -150,17 +153,114 @@ def listChannels(url):
 		}
 	''', params)
     
-        
+    addDir(_lang(30002), { "urlid": urlid, "url": url }, MODE_LIST_CHANNEL_EPISODES_LATEST, '') 
+    
     for item in data[u'data'][u'tag'][u'childTagsConnection'][u'edges']:
-        link = item['node'][u'urlName']
+        link = { "urlid": item[u'node'][u'id'], "url": item[u'node'][u'urlName'] }
         for images in item[u'node'][u'images']:
             image = 'https:'+images[u'url'] 
         name = item[u'node'][u'name']
-        addDir(name, link, MODE_LIST_EPISODES, image) 
+        if item[u'node'][u'category'] == 'tag':
+            addDir(name, link, MODE_LIST_PLAYLIST_EPISODES, image)
+        else:
+            addDir(name, link, MODE_LIST_EPISODES, image)
+        
+def listPlaylistEpisodes(url):
+    client = GraphQLClient(_apiurl)
+    params = { "urlName": url, "episodesConnectionFirst": 100 }
+
+    data = client.execute('''query LoadTag($urlName : String, $episodesConnectionFirst : Int){ tagData:tag(urlName: $urlName, category: tag){ ...PlaylistDetailFragmentOnTag episodesConnection(first : $episodesConnectionFirst) { ...EpisodeCardsFragmentOnEpisodeItemConnection } } }
+		fragment PlaylistDetailFragmentOnTag on Tag {
+			id
+			dotId
+			name
+			urlName
+			perex
+			category
+			images {
+				...DefaultFragmentOnImage
+			}
+			originTag {
+				...OriginTagInfoFragmentOnTag
+			}
+			bannerAdvert {
+				...DefaultFragmentOnBannerAdvert
+			}
+		}
+	
+		fragment EpisodeCardsFragmentOnEpisodeItemConnection on EpisodeItemConnection {
+			totalCount
+			pageInfo {
+				endCursor
+				hasNextPage
+			}
+			edges {
+				node {
+					...EpisodeCardFragmentOnEpisode
+				}
+			}
+		}
+	
+		fragment DefaultFragmentOnImage on Image {
+			usage,
+			url
+		}
+	
+		fragment OriginTagInfoFragmentOnTag on Tag {
+			id,
+			dotId,
+			name,
+			urlName,
+			category,
+			invisible,
+			images {
+				...DefaultFragmentOnImage
+			}
+		}
+	
+		fragment DefaultFragmentOnBannerAdvert on BannerAdvert {
+			section
+		}
+	
+		fragment EpisodeCardFragmentOnEpisode on Episode {
+			id
+			dotId
+			name
+			duration
+			images {
+				...DefaultFragmentOnImage
+			}
+			urlName
+			originTag {
+				...DefaultOriginTagFragmentOnTag
+			}
+			publish
+			views
+		}
+	
+		fragment DefaultOriginTagFragmentOnTag on Tag {
+			id,
+			dotId,
+			name,
+			urlName,
+			category,
+			images {
+				...DefaultFragmentOnImage
+			}
+		}
+        ''', params)
+        
+    for item in data[u'data'][u'tagData'][u'episodesConnection'][u'edges']:
+        link = { "urlid": item[u'node'][u'id'], "url": item[u'node'][u'urlName'] }
+        image = 'https:'+item[u'node'][u'images'][0][u'url']
+        name = item[u'node'][u'name']
+        date = datetime.utcfromtimestamp(item[u'node'][u'publish']).strftime("%Y-%m-%d")
+        info = { "duration": item[u'node'][u'duration'], "date": date }
+        addResolvedLink(name, link, image, name, info=info)
 
 def listEpisodes(url):
     client = GraphQLClient(_apiurl)
-    params = { "urlName": url, "episodesConnectionFirst": 20 }
+    params = { "urlName": url, "episodesConnectionFirst": 100 }
 
     data = client.execute('''query LoadTag($urlName : String, $episodesConnectionFirst : Int){ tagData:tag(urlName: $urlName, category: show){ ...ShowDetailFragmentOnTag episodesConnection(first : $episodesConnectionFirst) { ...SeasonEpisodeCardsFragmentOnEpisodeItemConnection } } }
 		fragment ShowDetailFragmentOnTag on Tag {
@@ -246,19 +346,31 @@ def listEpisodes(url):
         ''', params)
         
     for item in data[u'data'][u'tagData'][u'episodesConnection'][u'edges']:
-        link = item[u'node'][u'urlName']
+        link = { "urlid": item[u'node'][u'id'], "url": item[u'node'][u'urlName'] }
         image = 'https:'+item[u'node'][u'images'][0][u'url']
         name = item[u'node'][u'name']
         date = datetime.utcfromtimestamp(item[u'node'][u'publish']).strftime("%Y-%m-%d")
-        info={'duration':item[u'node'][u'duration'],'date':date}
+        info={ "duration": item[u'node'][u'duration'], "date": date }
         addResolvedLink(name, link, image, name, info=info)
 
-        
-def listEpisodesLatest(url):
+def listChannelEpisodesLatest(url):
     client = GraphQLClient(_apiurl)
-    params = { "episodesConnectionAfter": "1~MTU2ODg4MzYwMA~NjM5NzMzODE", "episodesConnectionFirst": 100, "id": "VGFnOjEyNDM2OTc" }
+    params = {"urlName": url, "childTagsConnectionFirst": 1, "episodesConnectionFirst": 100}
 
-    data = client.execute('''query LoadTag($id : ID, $episodesConnectionAfter : String, $episodesConnectionFirst : Int){ tagData:tag(id: $id){ episodesConnection(after: $episodesConnectionAfter,first : $episodesConnectionFirst) { ...EpisodeCardsFragmentOnEpisodeItemConnection } } }
+    data = client.execute('''query LoadChildTags($urlName : String, $childTagsConnectionFirst : Int, $episodesConnectionFirst : Int){ tag(urlName: $urlName, category: channel){ childTagsConnection(first : $childTagsConnectionFirst) { ...TimelineBoxFragmentOnTagConnection  edges { node { episodesConnection(first : $episodesConnectionFirst) { ...EpisodeCardsFragmentOnEpisodeItemConnection } } } } } }
+		fragment TimelineBoxFragmentOnTagConnection on TagConnection {
+			totalCount
+			pageInfo {
+				endCursor
+				hasNextPage
+			}
+			edges {
+				node {
+					...TimelineBoxFragmentOnTag
+				}
+			}
+		}
+	
 		fragment EpisodeCardsFragmentOnEpisodeItemConnection on EpisodeItemConnection {
 			totalCount
 			pageInfo {
@@ -269,6 +381,99 @@ def listEpisodesLatest(url):
 				node {
 					...EpisodeCardFragmentOnEpisode
 				}
+			}
+		}
+	
+		fragment TimelineBoxFragmentOnTag on Tag {
+			id,
+			dotId,
+			name,
+			urlName,
+			category,
+			originTag {
+				...DefaultOriginTagFragmentOnTag
+			}
+		}
+	
+		fragment EpisodeCardFragmentOnEpisode on Episode {
+			id
+			dotId
+			name
+			duration
+			images {
+				...DefaultFragmentOnImage
+			}
+			urlName
+			originTag {
+				...DefaultOriginTagFragmentOnTag
+			}
+			publish
+			views
+		}
+	
+		fragment DefaultOriginTagFragmentOnTag on Tag {
+			id,
+			dotId,
+			name,
+			urlName,
+			category,
+			images {
+				...DefaultFragmentOnImage
+			}
+		}
+	
+		fragment DefaultFragmentOnImage on Image {
+			usage,
+			url
+		}
+	''', params)
+    
+    for item in data[u'data'][u'tag'][u'childTagsConnection'][u'edges'][0][u'node'][u'episodesConnection'][u'edges']:
+        link = { "urlid": item[u'node'][u'id'], "url": item[u'node'][u'urlName'] }
+        for images in item[u'node'][u'images']:
+            image = 'https:'+images[u'url'] 
+        name = item[u'node'][u'name']
+        date = datetime.utcfromtimestamp(item[u'node'][u'publish']).strftime("%Y-%m-%d")
+        info={'duration':item[u'node'][u'duration'],'date':date}
+        addResolvedLink(name, link, image, name, info=info)
+
+def listEpisodesLatest():
+    client = GraphQLClient(_apiurl)
+    params = { "limit": 1, "episodesConnectionFirst": 50 }
+
+    data = client.execute('''query LoadTags($limit : Int, $episodesConnectionFirst : Int){ tags(listing: homepage, limit: $limit){ ...TimelineBoxFragmentOnTag episodesConnection(first : $episodesConnectionFirst) { ...EpisodeCardsFragmentOnEpisodeItemConnection } } tagsCount(listing: homepage) }
+		fragment TimelineBoxFragmentOnTag on Tag {
+			id,
+			dotId,
+			name,
+			urlName,
+			category,
+			originTag {
+				...DefaultOriginTagFragmentOnTag
+			}
+		}
+	
+		fragment EpisodeCardsFragmentOnEpisodeItemConnection on EpisodeItemConnection {
+			totalCount
+			pageInfo {
+				endCursor
+				hasNextPage
+			}
+			edges {
+				node {
+					...EpisodeCardFragmentOnEpisode
+				}
+			}
+		}
+	
+		fragment DefaultOriginTagFragmentOnTag on Tag {
+			id,
+			dotId,
+			name,
+			urlName,
+			category,
+			images {
+				...DefaultFragmentOnImage
 			}
 		}
 	
@@ -292,34 +497,22 @@ def listEpisodesLatest(url):
 			usage,
 			url
 		}
-	
-		fragment DefaultOriginTagFragmentOnTag on Tag {
-			id,
-			dotId,
-			name,
-			urlName,
-			category,
-			images {
-				...DefaultFragmentOnImage
-			}
-		}
 	''', params)
         
     
-    for item in data[u'data'][u'tagData'][u'episodesConnection'][u'edges']:
-        link = item[u'node'][u'urlName']
+    for item in data[u'data'][u'tags'][0][u'episodesConnection'][u'edges']:
+        link = { "urlid": item[u'node'][u'id'], "url": item[u'node'][u'urlName'] }
         tag = item[u'node'][u'originTag'][u'name']
         name = item[u'node'][u'name']
         if tag:
             name = tag + ' | ' + name
         image = 'https:'+item[u'node'][u'images'][0][u'url']
         date = datetime.utcfromtimestamp(item[u'node'][u'publish']).strftime("%Y-%m-%d")
-        logDbg(date)
         info={'duration':item[u'node'][u'duration'],'date':date}
         addResolvedLink(name, link, image, name, info=info)
 
 def getVideoLink(url):
-    req = urllib2.Request(url, None, {'Content-type': 'application/json', 'Accept': 'application/json', 'User-Agent': _useragent})
+    req = urllib2.Request(url, None, {'Content-type': 'application/json', 'Accept': 'application/json'})
     resp = urllib2.urlopen(req)
     return json.loads(resp.read().decode('utf-8'))
     
@@ -406,8 +599,8 @@ def videoLink(url):
     url=getVideoLink(data[u'data'][u'episode'][u'spl']+'spl2,3')
 
     if 'Location' in url:
-        link = url['Location'].split('/')
-        url = getVideoLink(url['Location'])
+        link = url[u'Location'].split('/')
+        url = getVideoLink(url[u'Location'])
     
     for quality in sorted(url[u'data'][u"mp4"], key=lambda kv: kv[1], reverse=True):
         stream_quality=quality
@@ -438,11 +631,11 @@ def getParams():
                 param[splitparams[0]]=splitparams[1]
     return param
 
-def composePluginUrl(url, mode, name):
-    return sys.argv[0]+"?url="+urllib.quote_plus(url.encode('utf-8'))+"&mode="+str(mode)+"&name="+urllib.quote_plus(name.encode('utf-8'))
+def composePluginUrl(urlid, url, mode, name):
+    return sys.argv[0]+"?urlid="+urllib.quote_plus(urlid.encode('utf-8'))+"&url="+urllib.quote_plus(url.encode('utf-8'))+"&mode="+str(mode)+"&name="+urllib.quote_plus(name.encode('utf-8'))
 
-def addItem(name, url, mode, iconimage, desc, isfolder, islatest=False, info={}):
-    u = composePluginUrl(url, mode, name)
+def addItem(name, url, mode, iconimage, desc, isfolder, islatest=False, info={}):  
+    u = composePluginUrl(url[u'urlid'], url[u'url'], mode, name)
     ok=True
     liz=xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
     liz.setInfo(type="Video", infoLabels={"Title": name, 'plot': desc})
@@ -458,36 +651,45 @@ def addItem(name, url, mode, iconimage, desc, isfolder, islatest=False, info={})
     return ok
 
 def addDir(name, url, mode, iconimage, plot='', info={}):
-    logDbg("addDir(): '"+name+"' url='"+url+"' icon='"+iconimage+"' mode='"+str(mode)+"'")
+    #logDbg("addDir(): '"+name+"' url='"+url+"' icon='"+iconimage+"' mode='"+str(mode)+"'")
     return addItem(name, url, mode, iconimage, plot, True)
     
 def addResolvedLink(name, url, iconimage, plot='', islatest=False, info={}):
     xbmcplugin.setContent(addonHandle, 'episodes')
     mode = MODE_VIDEOLINK
-    logDbg("addUnresolvedLink(): '"+name+"' url='"+url+"' icon='"+iconimage+"' mode='"+str(mode)+"'")
+    #logDbg("addUnresolvedLink(): '"+name+"' url='"+url+"' icon='"+iconimage+"' mode='"+str(mode)+"'")
     return addItem(name, url, mode, iconimage, plot, False, islatest, info)
 
 addonHandle=int(sys.argv[1])
 params=getParams()
+urlid = None
 url = None
 name = None
 thumb = None
 mode = None
 
 try:
+    urlid = urllib.unquote_plus(params["urlid"])
+except:
+    pass
+
+try:
     url = urllib.unquote_plus(params["url"])
 except:
     pass
+    
 try:
     name = urllib.unquote_plus(params["name"])
 except:
     pass
+    
 try:
     mode = int(params["mode"])
 except:
     pass
 
 logDbg("Mode: "+str(mode))
+logDbg("URLid: "+str(urlid))
 logDbg("URL: "+str(url))
 logDbg("Name: "+str(name))
 
@@ -495,27 +697,35 @@ if mode==None or url==None or len(url)<1:
     logDbg('listContent()')
     listContent()
 
-elif mode==MODE_LIST_SHOWS:
+elif mode == MODE_LIST_SHOWS:
     logDbg('listShows()')
     listShows()
     
-elif mode==MODE_LIST_CATEGORIES:
+elif mode == MODE_LIST_CATEGORIES:
     logDbg('listCategories()')
     listCategories()
 
-elif mode==MODE_LIST_CHANNELS:
+elif mode == MODE_LIST_CHANNELS:
     logDbg('listChannels()')
-    listChannels(url)  
+    listChannels(urlid, url)  
     
-elif mode==MODE_LIST_EPISODES:
+elif mode == MODE_LIST_EPISODES:
     logDbg('listEpisodes()')
     listEpisodes(url)
-       
-elif mode==MODE_LIST_EPISODES_LATEST:
-    logDbg('listEpisodesLatest()')
-    listEpisodesLatest(url)
 
-elif mode==MODE_VIDEOLINK:
+elif mode == MODE_LIST_PLAYLIST_EPISODES:
+    logDbg('listPlaylistEpisodes()')
+    listPlaylistEpisodes(url)
+    
+elif mode == MODE_LIST_EPISODES_LATEST:
+    logDbg('listEpisodesLatest()')
+    listEpisodesLatest()
+       
+elif mode == MODE_LIST_CHANNEL_EPISODES_LATEST:
+    logDbg('listChannelEpisodesLatest()')
+    listChannelEpisodesLatest(url)
+
+elif mode == MODE_VIDEOLINK:
     logDbg('videoLink() with url ' + str(url))
     videoLink(url)
     

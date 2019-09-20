@@ -1,2 +1,7 @@
+v1.0.1 (20.09.2019)
+- Oprava zobrazení nejnovějších videí
+- Nejnovější videa do každé kategorie
+- Podpora pro ostatní kanály (zpravodajství, ..)
+
 v1.0.0 (19.09.2019)
 - První vydání
