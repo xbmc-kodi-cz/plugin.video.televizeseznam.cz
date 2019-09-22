@@ -153,7 +153,7 @@ def listChannels(urlid, url):
 		}
 	''', params)
     
-    addDir(url+urlid, { "urlid": urlid, "url": url }, MODE_LIST_CHANNEL_EPISODES_LATEST, '') 
+    addDir("["+_lang(30002)+"]", { "urlid": urlid, "url": url }, MODE_LIST_CHANNEL_EPISODES_LATEST, '') 
     
     for item in data[u'data'][u'tag'][u'childTagsConnection'][u'edges']:
         link = { "urlid": item[u'node'][u'id'], "url": item[u'node'][u'urlName'] }
