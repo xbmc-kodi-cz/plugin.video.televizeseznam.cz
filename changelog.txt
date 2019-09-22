@@ -1,3 +1,6 @@
+v1.0.2 (22.09.2019)
+- Abecední řazení složek
+
 v1.0.1 (20.09.2019)
 - Oprava zobrazení nejnovějších videí
 - Nejnovější videa do každé kategorie

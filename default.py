@@ -153,7 +153,7 @@ def listChannels(urlid, url):
 		}
 	''', params)
     
-    addDir(_lang(30002), { "urlid": urlid, "url": url }, MODE_LIST_CHANNEL_EPISODES_LATEST, '') 
+    addDir(url+urlid, { "urlid": urlid, "url": url }, MODE_LIST_CHANNEL_EPISODES_LATEST, '') 
     
     for item in data[u'data'][u'tag'][u'childTagsConnection'][u'edges']:
         link = { "urlid": item[u'node'][u'id'], "url": item[u'node'][u'urlName'] }
@@ -647,7 +647,9 @@ def addItem(name, url, mode, iconimage, desc, isfolder, islatest=False, info={})
     liz.setInfo('video', {'mediatype': 'episode', 'title': name, 'plot': desc})
     if not isfolder:
         liz.setProperty("isPlayable", "true")
-    ok=xbmcplugin.addDirectoryItem(handle=addonHandle,url=u,listitem=liz,isFolder=isfolder)
+    else:
+        xbmcplugin.addSortMethod( handle = addonHandle, sortMethod=xbmcplugin.SORT_METHOD_LABEL )
+    ok=xbmcplugin.addDirectoryItem( handle = addonHandle,url=u,listitem=liz,isFolder=isfolder )
     return ok
 
 def addDir(name, url, mode, iconimage, plot='', info={}):
