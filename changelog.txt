@@ -1,3 +1,10 @@
+v1.0.4 (09.10.2019)
+- Stream (Nejnovější videa/Všechny pořady) přidán do hlavní nabídky
+
+v1.0.3 (26.09.2019)
+- Opraveno zobrazení Nejnovějších videi u některých kategorií/pořadů
+- V kategorii Nejnovější video zobrazen prefix pořadu
+
 v1.0.2 (22.09.2019)
 - Abecední řazení složek
 
