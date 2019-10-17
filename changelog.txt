@@ -1,3 +1,6 @@
+v1.0.5 (17.10.2019)
+- Změna režimu zobrazení položek
+
 v1.0.4 (09.10.2019)
 - Stream (Nejnovější videa/Všechny pořady) přidán do hlavní nabídky
 

@@ -154,7 +154,7 @@ def listChannels(urlid, url, category):
 		}
 	''', params)
     
-    addDir("#"+_lang(30002), { "urlid": urlid, "url": url, "category": category }, MODE_LIST_CHANNEL_EPISODES_LATEST, '') 
+    #addDir("#"+_lang(30002), { "urlid": urlid, "url": url, "category": category }, MODE_LIST_CHANNEL_EPISODES_LATEST, '') 
     
     for item in data[u'data'][u'tag'][u'childTagsConnection'][u'edges']:
         link = { "urlid": item[u'node'][u'id'], "url": item[u'node'][u'urlName'], "category": "show" }
@@ -657,7 +657,6 @@ def addItem(name, url, mode, iconimage, desc, isfolder, islatest=False, info={})
     return ok
 
 def addDir(name, url, mode, iconimage, plot='', info={}):
-    print url
     #logDbg("addDir(): '"+name+"' url='"+url+"' icon='"+iconimage+"' mode='"+str(mode)+"'")
     return addItem(name, url, mode, iconimage, plot, True)
     
@@ -713,14 +712,17 @@ if mode==None or url==None or len(url)<1:
 
 elif mode == MODE_LIST_SHOWS:
     logDbg('listShows()')
+    xbmcplugin.setContent(addonHandle, 'tvshows')
     listShows()
     
 elif mode == MODE_LIST_CATEGORIES:
     logDbg('listCategories()')
+    #xbmcplugin.setContent(addonHandle, 'tvshows')
     listCategories()
 
 elif mode == MODE_LIST_CHANNELS:
     logDbg('listChannels()')
+    xbmcplugin.setContent(addonHandle, 'tvshows')
     listChannels(urlid, url, category)  
     
 elif mode == MODE_LIST_EPISODES:
