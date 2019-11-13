@@ -21,6 +21,8 @@ MODE_LIST_EPISODES = 4
 MODE_LIST_PLAYLIST_EPISODES = 5
 MODE_LIST_CHANNEL_EPISODES_LATEST = 6
 MODE_LIST_EPISODES_LATEST = 7
+MODE_LIST_NEXT = 8
+MODE_LIST_CHANNEL_NEXT = 9
 MODE_VIDEOLINK = 10
 
 def log(msg, level=xbmc.LOGDEBUG):
@@ -154,8 +156,6 @@ def listChannels(urlid, url, category):
 		}
 	''', params)
     
-    #addDir("#"+_lang(30002), { "urlid": urlid, "url": url, "category": category }, MODE_LIST_CHANNEL_EPISODES_LATEST, '') 
-    
     for item in data[u'data'][u'tag'][u'childTagsConnection'][u'edges']:
         link = { "urlid": item[u'node'][u'id'], "url": item[u'node'][u'urlName'], "category": "show" }
         for images in item[u'node'][u'images']:
@@ -168,7 +168,7 @@ def listChannels(urlid, url, category):
         
 def listPlaylistEpisodes(url):
     client = GraphQLClient(_apiurl)
-    params = { "urlName": url, "episodesConnectionFirst": 100 }
+    params = { "urlName": url, "episodesConnectionFirst": 20 }
 
     data = client.execute('''query LoadTag($urlName : String, $episodesConnectionFirst : Int){ tagData:tag(urlName: $urlName, category: tag){ ...PlaylistDetailFragmentOnTag episodesConnection(first : $episodesConnectionFirst) { ...EpisodeCardsFragmentOnEpisodeItemConnection } } }
 		fragment PlaylistDetailFragmentOnTag on Tag {
@@ -261,7 +261,7 @@ def listPlaylistEpisodes(url):
 
 def listEpisodes(url):
     client = GraphQLClient(_apiurl)
-    params = { "urlName": url, "episodesConnectionFirst": 100 }
+    params = { "urlName": url, "episodesConnectionFirst": 20 }
 
     data = client.execute('''query LoadTag($urlName : String, $episodesConnectionFirst : Int){ tagData:tag(urlName: $urlName, category: show){ ...ShowDetailFragmentOnTag episodesConnection(first : $episodesConnectionFirst) { ...SeasonEpisodeCardsFragmentOnEpisodeItemConnection } } }
 		fragment ShowDetailFragmentOnTag on Tag {
@@ -353,10 +353,15 @@ def listEpisodes(url):
         date = datetime.utcfromtimestamp(item[u'node'][u'publish']).strftime("%Y-%m-%d")
         info={ "duration": item[u'node'][u'duration'], "date": date }
         addResolvedLink(name, link, image, name, info=info)
+    
+    if(data[u'data'][u'tagData'][u'episodesConnection'][u'pageInfo'][u'hasNextPage'] == True):
+        u = sys.argv[0]+'?mode=8&urlid='+urllib.quote_plus(urlid)+'&url='+urllib.quote_plus(data[u'data'][u'tagData'][u'episodesConnection'][u'pageInfo'][u'endCursor'])
+        liNext = xbmcgui.ListItem("Další")
+        xbmcplugin.addDirectoryItem(handle=addonHandle,url=u,listitem=liNext,isFolder=True)
 
 def listChannelEpisodesLatest(url, category):
     client = GraphQLClient(_apiurl)
-    params = {"urlName": url, "childTagsConnectionFirst": 1, "episodesConnectionFirst": 100}
+    params = {"urlName": url, "childTagsConnectionFirst": 1, "episodesConnectionFirst": 20}
 
     data = client.execute('''query LoadChildTags($urlName : String, $childTagsConnectionFirst : Int, $episodesConnectionFirst : Int){ tag(urlName: $urlName, category: '''+category+'''){ childTagsConnection(first : $childTagsConnectionFirst) { ...TimelineBoxFragmentOnTagConnection  edges { node { episodesConnection(first : $episodesConnectionFirst) { ...EpisodeCardsFragmentOnEpisodeItemConnection } } } } } }
 		fragment TimelineBoxFragmentOnTagConnection on TagConnection {
@@ -440,10 +445,15 @@ def listChannelEpisodesLatest(url, category):
         date = datetime.utcfromtimestamp(item[u'node'][u'publish']).strftime("%Y-%m-%d")
         info={'duration':item[u'node'][u'duration'],'date':date}
         addResolvedLink(name, link, image, item[u'node'][u'name'], info=info)
+        
+    if(data[u'data'][u'tag'][u'childTagsConnection'][u'edges'][0][u'node'][u'episodesConnection'][u'pageInfo'][u'hasNextPage'] == True):
+        u = sys.argv[0]+'?mode=9&urlid='+urllib.quote_plus(data[u'data'][u'tag'][u'childTagsConnection'][u'edges'][0][u'node'][u'originTag']['id'])+'&url='+urllib.quote_plus(data[u'data'][u'tag'][u'childTagsConnection'][u'edges'][0][u'node'][u'episodesConnection'][u'pageInfo'][u'endCursor'])
+        liNext = xbmcgui.ListItem("Další")
+        xbmcplugin.addDirectoryItem(handle=addonHandle,url=u,listitem=liNext,isFolder=True)
 
 def listEpisodesLatest():
     client = GraphQLClient(_apiurl)
-    params = { "limit": 1, "episodesConnectionFirst": 50 }
+    params = { "limit": 1, "episodesConnectionFirst": 20 }
 
     data = client.execute('''query LoadTags($limit : Int, $episodesConnectionFirst : Int){ tags(listing: homepage, limit: $limit){ ...TimelineBoxFragmentOnTag episodesConnection(first : $episodesConnectionFirst) { ...EpisodeCardsFragmentOnEpisodeItemConnection } } tagsCount(listing: homepage) }
 		fragment TimelineBoxFragmentOnTag on Tag {
@@ -502,7 +512,6 @@ def listEpisodesLatest():
 			url
 		}
 	''', params)
-        
     
     for item in data[u'data'][u'tags'][0][u'episodesConnection'][u'edges']:
         link = { "urlid": item[u'node'][u'id'], "url": item[u'node'][u'urlName'], "category": "show" }
@@ -514,6 +523,140 @@ def listEpisodesLatest():
         date = datetime.utcfromtimestamp(item[u'node'][u'publish']).strftime("%Y-%m-%d")
         info={'duration':item[u'node'][u'duration'],'date':date}
         addResolvedLink(name, link, image, item[u'node'][u'name'], info=info)
+        
+    if(data[u'data'][u'tags'][0][u'episodesConnection'][u'pageInfo'][u'hasNextPage'] == True):
+        u = sys.argv[0]+'?mode=8&urlid='+urllib.quote_plus("VGFnOjEyNDM2OTc")+'&url='+urllib.quote_plus(data[u'data'][u'tags'][0][u'episodesConnection'][u'pageInfo'][u'endCursor'])
+        liNext = xbmcgui.ListItem("Další")
+        xbmcplugin.addDirectoryItem(handle=addonHandle,url=u,listitem=liNext,isFolder=True)
+        
+def listEpisodesNext(urlid, url):
+    client = GraphQLClient(_apiurl)
+    params = { "id": urlid, "episodesConnectionAfter": url, "episodesConnectionFirst": 20 }
+
+    data = client.execute('''query LoadTag($id : ID, $episodesConnectionAfter : String, $episodesConnectionFirst : Int){ tagData:tag(id: $id){ episodesConnection(after: $episodesConnectionAfter,first : $episodesConnectionFirst) { ...SeasonEpisodeCardsFragmentOnEpisodeItemConnection } } }
+		fragment SeasonEpisodeCardsFragmentOnEpisodeItemConnection on EpisodeItemConnection {
+			totalCount
+			pageInfo {
+				endCursor
+				hasNextPage
+			}
+			edges {
+				node {
+					...SeasonEpisodeCardFragmentOnEpisode
+				}
+			}
+		}
+	
+		fragment SeasonEpisodeCardFragmentOnEpisode on Episode {
+			id
+			dotId
+			name
+			namePrefix
+			duration
+			images {
+				...DefaultFragmentOnImage
+			}
+			urlName
+			originTag {
+				...DefaultOriginTagFragmentOnTag
+			}
+			publish
+			views
+		}
+	
+		fragment DefaultFragmentOnImage on Image {
+			usage,
+			url
+		}
+	
+		fragment DefaultOriginTagFragmentOnTag on Tag {
+			id,
+			dotId,
+			name,
+			urlName,
+			category,
+			images {
+				...DefaultFragmentOnImage
+			}
+		}
+        ''', params)
+        
+    for item in data[u'data'][u'tagData'][u'episodesConnection'][u'edges']:
+        link = { "urlid": item[u'node'][u'id'], "url": item[u'node'][u'urlName'], "category": "show" }
+        image = 'https:'+item[u'node'][u'images'][0][u'url']
+        name = item[u'node'][u'name']
+        date = datetime.utcfromtimestamp(item[u'node'][u'publish']).strftime("%Y-%m-%d")
+        info={ "duration": item[u'node'][u'duration'], "date": date }
+        addResolvedLink(name, link, image, name, info=info)
+        
+    if(data[u'data'][u'tagData'][u'episodesConnection'][u'pageInfo'][u'hasNextPage'] == True):
+        u = sys.argv[0]+'?mode=8&urlid='+urllib.quote_plus(urlid)+'&url='+urllib.quote_plus(data[u'data'][u'tagData'][u'episodesConnection'][u'pageInfo'][u'endCursor'])
+        liNext = xbmcgui.ListItem("Další")
+        xbmcplugin.addDirectoryItem(handle=addonHandle,url=u,listitem=liNext,isFolder=True)
+        
+def listChannelEpisodesNext(urlid, url):
+    client = GraphQLClient(_apiurl)
+    params = { "id": urlid, "episodesConnectionAfter": url, "episodesConnectionFirst": 20 }
+
+    data = client.execute('''query LoadTag($id : ID, $episodesConnectionAfter : String, $episodesConnectionFirst : Int){ tagData:tag(id: $id){ episodesConnection(after: $episodesConnectionAfter,first : $episodesConnectionFirst) { ...EpisodeCardsFragmentOnEpisodeItemConnection } } }
+		fragment EpisodeCardsFragmentOnEpisodeItemConnection on EpisodeItemConnection {
+			totalCount
+			pageInfo {
+				endCursor
+				hasNextPage
+			}
+			edges {
+				node {
+					...EpisodeCardFragmentOnEpisode
+				}
+			}
+		}
+	
+		fragment EpisodeCardFragmentOnEpisode on Episode {
+			id
+			dotId
+			name
+			duration
+			images {
+				...DefaultFragmentOnImage
+			}
+			urlName
+			originTag {
+				...DefaultOriginTagFragmentOnTag
+			}
+			publish
+			views
+		}
+	
+		fragment DefaultFragmentOnImage on Image {
+			usage,
+			url
+		}
+	
+		fragment DefaultOriginTagFragmentOnTag on Tag {
+			id,
+			dotId,
+			name,
+			urlName,
+			category,
+			images {
+				...DefaultFragmentOnImage
+			}
+		}
+        ''', params)
+        
+    for item in data[u'data'][u'tagData'][u'episodesConnection'][u'edges']:
+        link = { "urlid": item[u'node'][u'id'], "url": item[u'node'][u'urlName'], "category": "show" }
+        image = 'https:'+item[u'node'][u'images'][0][u'url']
+        name = item[u'node'][u'name']
+        date = datetime.utcfromtimestamp(item[u'node'][u'publish']).strftime("%Y-%m-%d")
+        info={ "duration": item[u'node'][u'duration'], "date": date }
+        addResolvedLink(name, link, image, name, info=info)
+        
+    if(data[u'data'][u'tagData'][u'episodesConnection'][u'pageInfo'][u'hasNextPage'] == True):
+        u = sys.argv[0]+'?mode=8&urlid='+urllib.quote_plus(urlid)+'&url='+urllib.quote_plus(data[u'data'][u'tagData'][u'episodesConnection'][u'pageInfo'][u'endCursor'])
+        liNext = xbmcgui.ListItem("Další")
+        xbmcplugin.addDirectoryItem(handle=addonHandle,url=u,listitem=liNext,isFolder=True)
 
 def getVideoLink(url):
     req = urllib2.Request(url, None, {'Content-type': 'application/json', 'Accept': 'application/json'})
@@ -657,13 +800,11 @@ def addItem(name, url, mode, iconimage, desc, isfolder, islatest=False, info={})
     return ok
 
 def addDir(name, url, mode, iconimage, plot='', info={}):
-    #logDbg("addDir(): '"+name+"' url='"+url+"' icon='"+iconimage+"' mode='"+str(mode)+"'")
     return addItem(name, url, mode, iconimage, plot, True)
     
 def addResolvedLink(name, url, iconimage, plot='', islatest=False, info={}):
     xbmcplugin.setContent(addonHandle, 'episodes')
     mode = MODE_VIDEOLINK
-    #logDbg("addUnresolvedLink(): '"+name+"' url='"+url+"' icon='"+iconimage+"' mode='"+str(mode)+"'")
     return addItem(name, url, mode, iconimage, plot, False, islatest, info)
 
 addonHandle=int(sys.argv[1])
@@ -717,7 +858,6 @@ elif mode == MODE_LIST_SHOWS:
     
 elif mode == MODE_LIST_CATEGORIES:
     logDbg('listCategories()')
-    #xbmcplugin.setContent(addonHandle, 'tvshows')
     listCategories()
 
 elif mode == MODE_LIST_CHANNELS:
@@ -740,6 +880,14 @@ elif mode == MODE_LIST_EPISODES_LATEST:
 elif mode == MODE_LIST_CHANNEL_EPISODES_LATEST:
     logDbg('listChannelEpisodesLatest()')
     listChannelEpisodesLatest(url, category)
+
+elif mode == MODE_LIST_NEXT:
+    logDbg('listEpisodesNext()')
+    listEpisodesNext(urlid, url)
+
+elif mode == MODE_LIST_CHANNEL_NEXT:
+    logDbg('listEpisodesChannelNext()')
+    listChannelEpisodesNext(urlid, url)
 
 elif mode == MODE_VIDEOLINK:
     logDbg('videoLink() with url ' + str(url))
