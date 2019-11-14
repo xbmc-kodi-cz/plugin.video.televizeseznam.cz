@@ -356,7 +356,7 @@ def listEpisodes(url):
     
     if(data[u'data'][u'tagData'][u'episodesConnection'][u'pageInfo'][u'hasNextPage'] == True):
         u = sys.argv[0]+'?mode=8&urlid='+urllib.quote_plus(urlid)+'&url='+urllib.quote_plus(data[u'data'][u'tagData'][u'episodesConnection'][u'pageInfo'][u'endCursor'])
-        liNext = xbmcgui.ListItem("Další")
+        liNext = xbmcgui.ListItem(_lang(30001))
         xbmcplugin.addDirectoryItem(handle=addonHandle,url=u,listitem=liNext,isFolder=True)
 
 def listChannelEpisodesLatest(url, category):
@@ -447,8 +447,8 @@ def listChannelEpisodesLatest(url, category):
         addResolvedLink(name, link, image, item[u'node'][u'name'], info=info)
         
     if(data[u'data'][u'tag'][u'childTagsConnection'][u'edges'][0][u'node'][u'episodesConnection'][u'pageInfo'][u'hasNextPage'] == True):
-        u = sys.argv[0]+'?mode=9&urlid='+urllib.quote_plus(data[u'data'][u'tag'][u'childTagsConnection'][u'edges'][0][u'node'][u'originTag']['id'])+'&url='+urllib.quote_plus(data[u'data'][u'tag'][u'childTagsConnection'][u'edges'][0][u'node'][u'episodesConnection'][u'pageInfo'][u'endCursor'])
-        liNext = xbmcgui.ListItem("Další")
+        u = sys.argv[0]+'?mode=9&urlid='+urllib.quote_plus(data[u'data'][u'tag'][u'childTagsConnection'][u'edges'][0][u'node'][u'originTag']['id'])+'&latest=True&url='+urllib.quote_plus(data[u'data'][u'tag'][u'childTagsConnection'][u'edges'][0][u'node'][u'episodesConnection'][u'pageInfo'][u'endCursor'])
+        liNext = xbmcgui.ListItem(_lang(30001))
         xbmcplugin.addDirectoryItem(handle=addonHandle,url=u,listitem=liNext,isFolder=True)
 
 def listEpisodesLatest():
@@ -525,8 +525,8 @@ def listEpisodesLatest():
         addResolvedLink(name, link, image, item[u'node'][u'name'], info=info)
         
     if(data[u'data'][u'tags'][0][u'episodesConnection'][u'pageInfo'][u'hasNextPage'] == True):
-        u = sys.argv[0]+'?mode=8&urlid='+urllib.quote_plus("VGFnOjEyNDM2OTc")+'&url='+urllib.quote_plus(data[u'data'][u'tags'][0][u'episodesConnection'][u'pageInfo'][u'endCursor'])
-        liNext = xbmcgui.ListItem("Další")
+        u = sys.argv[0]+'?mode=8&urlid='+urllib.quote_plus("VGFnOjEyNDM2OTc")+'&latest=True&url='+urllib.quote_plus(data[u'data'][u'tags'][0][u'episodesConnection'][u'pageInfo'][u'endCursor'])
+        liNext = xbmcgui.ListItem(_lang(30001))
         xbmcplugin.addDirectoryItem(handle=addonHandle,url=u,listitem=liNext,isFolder=True)
         
 def listEpisodesNext(urlid, url):
@@ -584,14 +584,18 @@ def listEpisodesNext(urlid, url):
     for item in data[u'data'][u'tagData'][u'episodesConnection'][u'edges']:
         link = { "urlid": item[u'node'][u'id'], "url": item[u'node'][u'urlName'], "category": "show" }
         image = 'https:'+item[u'node'][u'images'][0][u'url']
+        tag = item[u'node'][u'originTag'][u'name']
         name = item[u'node'][u'name']
+        if tag and latest==str(True):
+            name = tag + ' | ' + name
         date = datetime.utcfromtimestamp(item[u'node'][u'publish']).strftime("%Y-%m-%d")
         info={ "duration": item[u'node'][u'duration'], "date": date }
         addResolvedLink(name, link, image, name, info=info)
+        logDbg(latest)
         
     if(data[u'data'][u'tagData'][u'episodesConnection'][u'pageInfo'][u'hasNextPage'] == True):
-        u = sys.argv[0]+'?mode=8&urlid='+urllib.quote_plus(urlid)+'&url='+urllib.quote_plus(data[u'data'][u'tagData'][u'episodesConnection'][u'pageInfo'][u'endCursor'])
-        liNext = xbmcgui.ListItem("Další")
+        u = sys.argv[0]+'?mode=8&urlid='+urllib.quote_plus(urlid)+'&latest='+urllib.quote_plus(str(latest))+'&url='+urllib.quote_plus(data[u'data'][u'tagData'][u'episodesConnection'][u'pageInfo'][u'endCursor'])
+        liNext = xbmcgui.ListItem(_lang(30001))
         xbmcplugin.addDirectoryItem(handle=addonHandle,url=u,listitem=liNext,isFolder=True)
         
 def listChannelEpisodesNext(urlid, url):
@@ -648,14 +652,17 @@ def listChannelEpisodesNext(urlid, url):
     for item in data[u'data'][u'tagData'][u'episodesConnection'][u'edges']:
         link = { "urlid": item[u'node'][u'id'], "url": item[u'node'][u'urlName'], "category": "show" }
         image = 'https:'+item[u'node'][u'images'][0][u'url']
+        tag = item[u'node'][u'originTag'][u'name']
         name = item[u'node'][u'name']
+        if tag and latest==str(True):
+            name = tag + ' | ' + name
         date = datetime.utcfromtimestamp(item[u'node'][u'publish']).strftime("%Y-%m-%d")
         info={ "duration": item[u'node'][u'duration'], "date": date }
         addResolvedLink(name, link, image, name, info=info)
         
     if(data[u'data'][u'tagData'][u'episodesConnection'][u'pageInfo'][u'hasNextPage'] == True):
-        u = sys.argv[0]+'?mode=8&urlid='+urllib.quote_plus(urlid)+'&url='+urllib.quote_plus(data[u'data'][u'tagData'][u'episodesConnection'][u'pageInfo'][u'endCursor'])
-        liNext = xbmcgui.ListItem("Další")
+        u = sys.argv[0]+'?mode=8&urlid='+urllib.quote_plus(urlid)+'&latest='+urllib.quote_plus(str(latest))+'&url='+urllib.quote_plus(data[u'data'][u'tagData'][u'episodesConnection'][u'pageInfo'][u'endCursor'])
+        liNext = xbmcgui.ListItem(_lang(30001))
         xbmcplugin.addDirectoryItem(handle=addonHandle,url=u,listitem=liNext,isFolder=True)
 
 def getVideoLink(url):
@@ -815,6 +822,7 @@ category = None
 name = None
 thumb = None
 mode = None
+latest = None
 
 try:
     urlid = urllib.unquote_plus(params["urlid"])
@@ -837,6 +845,11 @@ except:
     pass
     
 try:
+    latest = urllib.unquote_plus(params["latest"])
+except:
+    pass
+    
+try:
     mode = int(params["mode"])
 except:
     pass
@@ -846,6 +859,7 @@ logDbg("URLid: "+str(urlid))
 logDbg("URL: "+str(url))
 logDbg("Category: "+str(category))
 logDbg("Name: "+str(name))
+logDbg("Latest: "+str(latest))
 
 if mode==None or url==None or len(url)<1:
     logDbg('listContent()')
