@@ -39,6 +39,7 @@ def logErr(msg):
 def listContent():
     addDir(_lang(30003)+" "+"Stream", { "urlid": "VGFnOjI", "url": "stream", "category": "service" }, MODE_LIST_CHANNELS, '')
     addDir(_lang(30002)+" "+"Stream", { "urlid": "VGFnOjI", "url": "stream", "category": "service" }, MODE_LIST_CHANNEL_EPISODES_LATEST, '')
+    addDir("Zprávy", { "urlid": "seznam-zpravy", "url": "seznam-zpravy", "category": "service" }, MODE_LIST_CHANNEL_EPISODES_LATEST, '')
     addDir(_lang(30002), { "urlid": "ListShowLatest", "url": "ListShowLatest", "category": "show" }, MODE_LIST_EPISODES_LATEST, '')
     addDir(_lang(30003), { "urlid": "ListShowLatest", "url": "ListShowLatest", "category": "show" }, MODE_LIST_SHOWS, '')
     addDir(_lang(30004), { "urlid": "ListShowLatest", "url": "listCategories", "category": "show" }, MODE_LIST_CATEGORIES, '')
@@ -447,7 +448,7 @@ def listChannelEpisodesLatest(url, category):
         addResolvedLink(name, link, image, item[u'node'][u'name'], info=info)
         
     if(data[u'data'][u'tag'][u'childTagsConnection'][u'edges'][0][u'node'][u'episodesConnection'][u'pageInfo'][u'hasNextPage'] == True):
-        u = sys.argv[0]+'?mode=9&urlid='+urllib.quote_plus(data[u'data'][u'tag'][u'childTagsConnection'][u'edges'][0][u'node'][u'originTag']['id'])+'&latest=True&url='+urllib.quote_plus(data[u'data'][u'tag'][u'childTagsConnection'][u'edges'][0][u'node'][u'episodesConnection'][u'pageInfo'][u'endCursor'])
+        u = sys.argv[0]+'?mode=9&urlid='+urllib.quote_plus(data[u'data'][u'tag'][u'childTagsConnection'][u'edges'][0][u'node'][u'id'])+'&latest=True&url='+urllib.quote_plus(data[u'data'][u'tag'][u'childTagsConnection'][u'edges'][0][u'node'][u'episodesConnection'][u'pageInfo'][u'endCursor'])
         liNext = xbmcgui.ListItem(_lang(30001))
         xbmcplugin.addDirectoryItem(handle=addonHandle,url=u,listitem=liNext,isFolder=True)
 
@@ -591,7 +592,6 @@ def listEpisodesNext(urlid, url):
         date = datetime.utcfromtimestamp(item[u'node'][u'publish']).strftime("%Y-%m-%d")
         info={ "duration": item[u'node'][u'duration'], "date": date }
         addResolvedLink(name, link, image, name, info=info)
-        logDbg(latest)
         
     if(data[u'data'][u'tagData'][u'episodesConnection'][u'pageInfo'][u'hasNextPage'] == True):
         u = sys.argv[0]+'?mode=8&urlid='+urllib.quote_plus(urlid)+'&latest='+urllib.quote_plus(str(latest))+'&url='+urllib.quote_plus(data[u'data'][u'tagData'][u'episodesConnection'][u'pageInfo'][u'endCursor'])
