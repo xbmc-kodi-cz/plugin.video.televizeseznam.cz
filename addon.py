@@ -37,8 +37,8 @@ def logErr(msg):
     log(msg,level=xbmc.LOGERROR)
 
 def listContent():
-    addDir(_lang(30003)+" "+"Stream", { "urlid": "stream", "url": "stream", "category": "service" }, MODE_LIST_SHOWS, '')
-    addDir(_lang(30002)+" "+"Stream", { "urlid": "stream", "url": "stream", "category": "service" }, MODE_LIST_CHANNEL_EPISODES_LATEST, '')
+    addDir(_lang(30003)+" "+"Stream", { "urlid": "VGFnOjI", "url": "stream", "category": "service" }, MODE_LIST_CHANNELS, '')
+    addDir(_lang(30002)+" "+"Stream", { "urlid": "VGFnOjI", "url": "stream", "category": "service" }, MODE_LIST_CHANNEL_EPISODES_LATEST, '')
     addDir(_lang(30002), { "urlid": "ListShowLatest", "url": "ListShowLatest", "category": "show" }, MODE_LIST_EPISODES_LATEST, '')
     addDir(_lang(30003), { "urlid": "ListShowLatest", "url": "ListShowLatest", "category": "show" }, MODE_LIST_SHOWS, '')
     addDir(_lang(30004), { "urlid": "ListShowLatest", "url": "listCategories", "category": "show" }, MODE_LIST_CATEGORIES, '')
@@ -65,15 +65,17 @@ def listShows():
     client = GraphQLClient(_apiurl)
     params = { "limit": 500 }
 
-    data = client.execute('''query LoadTags($limit : Int){ tags(listing: navigation, limit: $limit){ ...NavigationFragmentOnTag  } tagsCount(listing: navigation) }
-		fragment NavigationFragmentOnTag on Tag {
+    data = client.execute('''query LoadTags($limit : Int){ tags(orderType: guide, category: [show], limit: $limit){ ...TagCardFragmentOnTag  } tagsCount(category: [show]) }
+		fragment TagCardFragmentOnTag on Tag {
 			id,
+			dotId,
 			name,
+			category,
+			perex,
+			urlName,
 			images {
 				...DefaultFragmentOnImage
 			},
-			category,
-			urlName,
 			originTag {
 				...DefaultOriginTagFragmentOnTag
 			}
@@ -99,12 +101,11 @@ def listShows():
     for item in data[u'data'][u'tags']:
         link = { "urlid": item[u'id'], "url": item[u'urlName'], "category": item[u'category'] }
         name = item[u'name']
+        perex = item[u'perex']              
         for images in item[u'images']:
             image = 'https:'+images[u'url'] 
-        if item[u'category'] == 'service':
-            addDir(name, link, MODE_LIST_CHANNELS, image)
-        else:
-            addDir(name, link, MODE_LIST_EPISODES, image)
+        if item[u'category'] != 'service':
+            addDir(name, link, MODE_LIST_EPISODES, image, perex)
 
 def listChannels(urlid, url, category):
     client = GraphQLClient(_apiurl)
@@ -161,10 +162,9 @@ def listChannels(urlid, url, category):
         for images in item[u'node'][u'images']:
             image = 'https:'+images[u'url'] 
         name = item[u'node'][u'name']
-        if item[u'node'][u'category'] == 'tag':
-            addDir(name, link, MODE_LIST_PLAYLIST_EPISODES, image)
-        else:
-            addDir(name, link, MODE_LIST_EPISODES, image)
+        perex = item[u'node'][u'perex']
+        if item[u'node'][u'category'] != 'tag':
+            addDir(name, link, MODE_LIST_EPISODES, image, perex)
         
 def listPlaylistEpisodes(url):
     client = GraphQLClient(_apiurl)

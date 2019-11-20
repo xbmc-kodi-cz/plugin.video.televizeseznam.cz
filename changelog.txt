@@ -1,3 +1,7 @@
+v1.0.9 (20.11.2019)
+- Oprava "Všechny pořady Stream"
+- Přidáno Zobrazení popisu pořadu
+
 v1.0.8 (14.11.2019)
 - Vylepšení stránkování
 
