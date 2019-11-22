@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="plugin.video.televizeseznam.cz"           
        name="Televize Seznam"
-       version="1.0.10"
+       version="1.0.11"
        provider-name="wombat">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -16,5 +16,47 @@
         Internetová televize TelevizeSeznam.cz plná desítek originálních pořadů, videí seriálů, které si pustíte, kdy chcete vy. Online i offline v aplikaci.
     </description>
     <source>https://github.com/wombat01/plugin.video.televizeseznam.cz</source>
+    <news>
+v1.0.11 (2019-11-20)
+ - Drobné úpravy
+ - Zvětšen limit stránkování
+
+v1.0.10 (2019-11-20)
+- Přidána kategorie "Zprávy"
+
+v1.0.9 (2019-11-20)
+- Oprava "Všechny pořady Stream"
+- Přidáno Zobrazení popisu pořadu
+
+v1.0.8 (2019-11-14)
+- Vylepšení stránkování
+
+v1.0.7 (2019-11-13)
+- Stránkování
+
+v1.0.6 (2019-10.26)
+- Drobné změny
+
+v1.0.5 (2019-10-17)
+- Změna režimu zobrazení položek
+
+v1.0.4 (2019-01-09)
+- Stream (Nejnovější videa/Všechny pořady) přidán do hlavní nabídky
+
+v1.0.3 (2019-09-26)
+- Opraveno zobrazení Nejnovějších videí u některých kategorií/pořadů
+- V kategorii Nejnovější video zobrazen prefix pořadu
+
+v1.0.2 (2019-09-22)
+- Abecední řazení složek
+
+v1.0.1 (2019-09-20)
+- Oprava zobrazení nejnovějších videí
+- Nejnovější videa do každé kategorie
+- Podpora pro ostatní kanály (zpravodajství, ..)
+
+v1.0.0 (19.09.2019)
+- První vydání
+    </news>
   </extension>
 </addon>

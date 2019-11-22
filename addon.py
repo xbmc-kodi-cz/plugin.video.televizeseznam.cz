@@ -37,12 +37,12 @@ def logErr(msg):
     log(msg,level=xbmc.LOGERROR)
 
 def listContent():
-    addDir(_lang(30003)+" "+"Stream", { "urlid": "VGFnOjI", "url": "stream", "category": "service" }, MODE_LIST_CHANNELS, '')
-    addDir(_lang(30002)+" "+"Stream", { "urlid": "VGFnOjI", "url": "stream", "category": "service" }, MODE_LIST_CHANNEL_EPISODES_LATEST, '')
-    addDir("Zprávy", { "urlid": "seznam-zpravy", "url": "seznam-zpravy", "category": "service" }, MODE_LIST_CHANNEL_EPISODES_LATEST, '')
-    addDir(_lang(30002), { "urlid": "ListShowLatest", "url": "ListShowLatest", "category": "show" }, MODE_LIST_EPISODES_LATEST, '')
-    addDir(_lang(30003), { "urlid": "ListShowLatest", "url": "ListShowLatest", "category": "show" }, MODE_LIST_SHOWS, '')
-    addDir(_lang(30004), { "urlid": "ListShowLatest", "url": "listCategories", "category": "show" }, MODE_LIST_CATEGORIES, '')
+    addDir(_lang(30003)+" "+"Stream", { "urlid": "VGFnOjI", "url": "stream", "category": "service" }, MODE_LIST_CHANNELS)
+    addDir(_lang(30002)+" "+"Stream", { "urlid": "VGFnOjI", "url": "stream", "category": "service" }, MODE_LIST_CHANNEL_EPISODES_LATEST)
+    addDir("Zprávy", { "urlid": "seznam-zpravy", "url": "seznam-zpravy", "category": "service" }, MODE_LIST_CHANNEL_EPISODES_LATEST)
+    addDir(_lang(30002), { "urlid": "ListShowLatest", "url": "ListShowLatest", "category": "show" }, MODE_LIST_EPISODES_LATEST)
+    addDir(_lang(30003), { "urlid": "ListShowLatest", "url": "ListShowLatest", "category": "show" }, MODE_LIST_SHOWS)
+    addDir(_lang(30004), { "urlid": "ListShowLatest", "url": "listCategories", "category": "show" }, MODE_LIST_CATEGORIES)
 
 def listCategories():    
     client = GraphQLClient(_apiurl)
@@ -60,7 +60,7 @@ def listCategories():
     for item in data[u'data'][u'tags']:
         link = { "urlid": item[u'id'], "url": item[u'urlName'], "category": "channel" }
         name = item[u'name']
-        addDir(name, link, MODE_LIST_CHANNELS, '')
+        addDir(name, link, MODE_LIST_CHANNELS)
         
 def listShows():    
     client = GraphQLClient(_apiurl)
@@ -169,7 +169,7 @@ def listChannels(urlid, url, category):
         
 def listPlaylistEpisodes(url):
     client = GraphQLClient(_apiurl)
-    params = { "urlName": url, "episodesConnectionFirst": 20 }
+    params = { "urlName": url, "episodesConnectionFirst": 25 }
 
     data = client.execute('''query LoadTag($urlName : String, $episodesConnectionFirst : Int){ tagData:tag(urlName: $urlName, category: tag){ ...PlaylistDetailFragmentOnTag episodesConnection(first : $episodesConnectionFirst) { ...EpisodeCardsFragmentOnEpisodeItemConnection } } }
 		fragment PlaylistDetailFragmentOnTag on Tag {
@@ -262,7 +262,7 @@ def listPlaylistEpisodes(url):
 
 def listEpisodes(url):
     client = GraphQLClient(_apiurl)
-    params = { "urlName": url, "episodesConnectionFirst": 20 }
+    params = { "urlName": url, "episodesConnectionFirst": 25 }
 
     data = client.execute('''query LoadTag($urlName : String, $episodesConnectionFirst : Int){ tagData:tag(urlName: $urlName, category: show){ ...ShowDetailFragmentOnTag episodesConnection(first : $episodesConnectionFirst) { ...SeasonEpisodeCardsFragmentOnEpisodeItemConnection } } }
 		fragment ShowDetailFragmentOnTag on Tag {
@@ -362,7 +362,7 @@ def listEpisodes(url):
 
 def listChannelEpisodesLatest(url, category):
     client = GraphQLClient(_apiurl)
-    params = {"urlName": url, "childTagsConnectionFirst": 1, "episodesConnectionFirst": 20}
+    params = {"urlName": url, "childTagsConnectionFirst": 1, "episodesConnectionFirst": 25}
 
     data = client.execute('''query LoadChildTags($urlName : String, $childTagsConnectionFirst : Int, $episodesConnectionFirst : Int){ tag(urlName: $urlName, category: '''+category+'''){ childTagsConnection(first : $childTagsConnectionFirst) { ...TimelineBoxFragmentOnTagConnection  edges { node { episodesConnection(first : $episodesConnectionFirst) { ...EpisodeCardsFragmentOnEpisodeItemConnection } } } } } }
 		fragment TimelineBoxFragmentOnTagConnection on TagConnection {
@@ -454,7 +454,7 @@ def listChannelEpisodesLatest(url, category):
 
 def listEpisodesLatest():
     client = GraphQLClient(_apiurl)
-    params = { "limit": 1, "episodesConnectionFirst": 20 }
+    params = { "limit": 1, "episodesConnectionFirst": 25 }
 
     data = client.execute('''query LoadTags($limit : Int, $episodesConnectionFirst : Int){ tags(listing: homepage, limit: $limit){ ...TimelineBoxFragmentOnTag episodesConnection(first : $episodesConnectionFirst) { ...EpisodeCardsFragmentOnEpisodeItemConnection } } tagsCount(listing: homepage) }
 		fragment TimelineBoxFragmentOnTag on Tag {
@@ -532,7 +532,7 @@ def listEpisodesLatest():
         
 def listEpisodesNext(urlid, url):
     client = GraphQLClient(_apiurl)
-    params = { "id": urlid, "episodesConnectionAfter": url, "episodesConnectionFirst": 20 }
+    params = { "id": urlid, "episodesConnectionAfter": url, "episodesConnectionFirst": 25 }
 
     data = client.execute('''query LoadTag($id : ID, $episodesConnectionAfter : String, $episodesConnectionFirst : Int){ tagData:tag(id: $id){ episodesConnection(after: $episodesConnectionAfter,first : $episodesConnectionFirst) { ...SeasonEpisodeCardsFragmentOnEpisodeItemConnection } } }
 		fragment SeasonEpisodeCardsFragmentOnEpisodeItemConnection on EpisodeItemConnection {
@@ -600,7 +600,7 @@ def listEpisodesNext(urlid, url):
         
 def listChannelEpisodesNext(urlid, url):
     client = GraphQLClient(_apiurl)
-    params = { "id": urlid, "episodesConnectionAfter": url, "episodesConnectionFirst": 20 }
+    params = { "id": urlid, "episodesConnectionAfter": url, "episodesConnectionFirst": 25 }
 
     data = client.execute('''query LoadTag($id : ID, $episodesConnectionAfter : String, $episodesConnectionFirst : Int){ tagData:tag(id: $id){ episodesConnection(after: $episodesConnectionAfter,first : $episodesConnectionFirst) { ...EpisodeCardsFragmentOnEpisodeItemConnection } } }
 		fragment EpisodeCardsFragmentOnEpisodeItemConnection on EpisodeItemConnection {
@@ -805,8 +805,8 @@ def addItem(name, url, mode, iconimage, desc, isfolder, islatest=False, info={})
         xbmcplugin.addSortMethod( handle = addonHandle, sortMethod=xbmcplugin.SORT_METHOD_LABEL )
     ok=xbmcplugin.addDirectoryItem( handle = addonHandle,url=u,listitem=liz,isFolder=isfolder )
     return ok
-
-def addDir(name, url, mode, iconimage, plot='', info={}):
+    
+def addDir(name, url, mode, iconimage='', plot='', info={}):
     return addItem(name, url, mode, iconimage, plot, True)
     
 def addResolvedLink(name, url, iconimage, plot='', islatest=False, info={}):
