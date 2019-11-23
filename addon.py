@@ -39,7 +39,7 @@ def logErr(msg):
 def listContent():
     addDir(_lang(30003)+" "+"Stream", { "urlid": "VGFnOjI", "url": "stream", "category": "service" }, MODE_LIST_CHANNELS)
     addDir(_lang(30002)+" "+"Stream", { "urlid": "VGFnOjI", "url": "stream", "category": "service" }, MODE_LIST_CHANNEL_EPISODES_LATEST)
-    addDir("Zprávy", { "urlid": "seznam-zpravy", "url": "seznam-zpravy", "category": "service" }, MODE_LIST_CHANNEL_EPISODES_LATEST)
+    addDir(_lang(30005), { "urlid": "seznam-zpravy", "url": "seznam-zpravy", "category": "service" }, MODE_LIST_CHANNEL_EPISODES_LATEST)
     addDir(_lang(30002), { "urlid": "ListShowLatest", "url": "ListShowLatest", "category": "show" }, MODE_LIST_EPISODES_LATEST)
     addDir(_lang(30003), { "urlid": "ListShowLatest", "url": "ListShowLatest", "category": "show" }, MODE_LIST_SHOWS)
     addDir(_lang(30004), { "urlid": "ListShowLatest", "url": "listCategories", "category": "show" }, MODE_LIST_CATEGORIES)
