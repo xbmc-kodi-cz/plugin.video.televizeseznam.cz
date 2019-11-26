@@ -758,8 +758,11 @@ def videoLink(url):
     
     for quality in sorted(url[u'data'][u"mp4"], key=lambda kv: kv[1], reverse=True):
         stream_quality=quality
-        video_url = url[u'data'][u"mp4"][stream_quality][u"url"][3:]
-
+    
+    if _addon.getSetting('best_quality') == 'false':
+        stream_quality = _addon.getSetting('lower_quality')
+    
+    video_url = url[u'data'][u"mp4"][stream_quality][u"url"][3:]
     stream_url = '/'.join(link[0:5])+'/'+video_url
 
     liz = xbmcgui.ListItem()
