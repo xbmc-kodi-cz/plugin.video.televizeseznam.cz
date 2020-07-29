@@ -59,7 +59,7 @@ def listCategories():
         
     for item in data[u'data'][u'tags']:
         link = { "urlid": item[u'id'], "url": item[u'urlName'], "category": "channel" }
-        name = item[u'name']
+        name = item[u'name'].strip()
         addDir(name, link, MODE_LIST_CHANNELS)
         
 def listShows():    
@@ -101,7 +101,7 @@ def listShows():
 
     for item in data[u'data'][u'tags']:
         link = { "urlid": item[u'id'], "url": item[u'urlName'], "category": item[u'category'] }
-        name = item[u'name']
+        name = item[u'name'].strip()
         perex = item[u'perex']              
         for images in item[u'images']:
             image = 'https:'+images[u'url'] 
@@ -162,7 +162,7 @@ def listChannels(urlid, url, category):
         link = { "urlid": item[u'node'][u'id'], "url": item[u'node'][u'urlName'], "category": "show" }
         for images in item[u'node'][u'images']:
             image = 'https:'+images[u'url'] 
-        name = item[u'node'][u'name']
+        name = item[u'node'][u'name'].strip()
         perex = item[u'node'][u'perex']
         if item[u'node'][u'category'] != 'tag':
             addDir(name, link, MODE_LIST_EPISODES, image, perex)
@@ -255,7 +255,7 @@ def listPlaylistEpisodes(url):
     for item in data[u'data'][u'tagData'][u'episodesConnection'][u'edges']:
         link = { "urlid": item[u'node'][u'id'], "url": item[u'node'][u'urlName'], "category": "show" }
         image = 'https:'+item[u'node'][u'images'][0][u'url']
-        name = item[u'node'][u'name']
+        name = item[u'node'][u'name'].strip()
         date = datetime.utcfromtimestamp(item[u'node'][u'publish']).strftime("%Y-%m-%d")
         info = { "duration": item[u'node'][u'duration'], "date": date }
         addResolvedLink(name, link, image, name, info=info)
@@ -350,7 +350,7 @@ def listEpisodes(url):
     for item in data[u'data'][u'tagData'][u'episodesConnection'][u'edges']:
         link = { "urlid": item[u'node'][u'id'], "url": item[u'node'][u'urlName'], "category": "show" }
         image = 'https:'+item[u'node'][u'images'][0][u'url']
-        name = item[u'node'][u'name']
+        name = item[u'node'][u'name'].strip()
         date = datetime.utcfromtimestamp(item[u'node'][u'publish']).strftime("%Y-%m-%d")
         info={ "duration": item[u'node'][u'duration'], "date": date }
         addResolvedLink(name, link, image, name, info=info)
@@ -437,10 +437,10 @@ def listChannelEpisodesLatest(url, category):
     
     for item in data[u'data'][u'tag'][u'childTagsConnection'][u'edges'][0][u'node'][u'episodesConnection'][u'edges']:
         link = { "urlid": item[u'node'][u'id'], "url": item[u'node'][u'urlName'], "category": "show" }
-        name = item[u'node'][u'name']
+        name = item[u'node'][u'name'].strip()
         tag = item[u'node'][u'originTag'][u'name']
         if tag:
-            name = tag + ' | ' + name 
+            name = tag + ' | ' + name.strip()
         for images in item[u'node'][u'images']:
             image = 'https:'+images[u'url'] 
         date = datetime.utcfromtimestamp(item[u'node'][u'publish']).strftime("%Y-%m-%d")
@@ -517,9 +517,9 @@ def listEpisodesLatest():
     for item in data[u'data'][u'tags'][0][u'episodesConnection'][u'edges']:
         link = { "urlid": item[u'node'][u'id'], "url": item[u'node'][u'urlName'], "category": "show" }
         tag = item[u'node'][u'originTag'][u'name']
-        name = item[u'node'][u'name']
+        name = item[u'node'][u'name'].strip()
         if tag:
-            name = tag + ' | ' + name
+            name = tag + ' | ' + name.strip()
         image = 'https:'+item[u'node'][u'images'][0][u'url']
         date = datetime.utcfromtimestamp(item[u'node'][u'publish']).strftime("%Y-%m-%d")
         info={'duration':item[u'node'][u'duration'],'date':date}
@@ -586,9 +586,9 @@ def listEpisodesNext(urlid, url):
         link = { "urlid": item[u'node'][u'id'], "url": item[u'node'][u'urlName'], "category": "show" }
         image = 'https:'+item[u'node'][u'images'][0][u'url']
         tag = item[u'node'][u'originTag'][u'name']
-        name = item[u'node'][u'name']
+        name = item[u'node'][u'name'].strip()
         if tag and latest==str(True):
-            name = tag + ' | ' + name
+            name = tag + ' | ' + name.strip()
         date = datetime.utcfromtimestamp(item[u'node'][u'publish']).strftime("%Y-%m-%d")
         info={ "duration": item[u'node'][u'duration'], "date": date }
         addResolvedLink(name, link, image, name, info=info)
@@ -653,9 +653,9 @@ def listChannelEpisodesNext(urlid, url):
         link = { "urlid": item[u'node'][u'id'], "url": item[u'node'][u'urlName'], "category": "show" }
         image = 'https:'+item[u'node'][u'images'][0][u'url']
         tag = item[u'node'][u'originTag'][u'name']
-        name = item[u'node'][u'name']
+        name = item[u'node'][u'name'].strip()
         if tag and latest==str(True):
-            name = tag + ' | ' + name
+            name = tag + ' | ' + name.strip()
         date = datetime.utcfromtimestamp(item[u'node'][u'publish']).strftime("%Y-%m-%d")
         info={ "duration": item[u'node'][u'duration'], "date": date }
         addResolvedLink(name, link, image, name, info=info)
@@ -745,7 +745,7 @@ def videoLink(url):
 		}
 	''', params)
     
-    name = data[u'data'][u'episode'][u'name']
+    name = data[u'data'][u'episode'][u'name'].strip()
     image = 'https:'+data[u'data'][u'episode'][u'images'][0][u'url']
     perex = data[u'data'][u'episode'][u'perex']
     link = data[u'data'][u'episode'][u'spl'].split('/')
