@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+    <category label="31001">
+        <setting label="31002" type="bool" id="auto_quality" default="true"/>
+        <setting label="31003" type="labelenum" id="own_quality" values="144p|240p|360p|480p|720p" enable="eq(-1,false)" default="720p" />
+        <setting type="sep"/>
+        <setting label="31004" type="slider" id="limit" default="20" range="1,100" option="int" />
+    </category>
+</settings>
