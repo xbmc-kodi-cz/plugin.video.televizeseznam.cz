@@ -1,0 +1,49 @@
+# Kodi Media Center language file
+# Addon Name: Televize Seznam
+# Addon id: plugin.video.televizeseznam.cz
+# Addon Provider: wombat
+msgid ""
+msgstr ""
+
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: en\n"
+
+msgctxt "#30001"
+msgid "Next"
+msgstr ""
+
+msgctxt "#30002"
+msgid "Recent Videos"
+msgstr ""
+
+msgctxt "#30003"
+msgid "Shows"
+msgstr ""
+
+msgctxt "#30004"
+msgid "Categories"
+msgstr ""
+
+msgctxt "#30005"
+msgid "Search"
+msgstr ""
+
+msgctxt "#30006"
+msgid "Go to show"
+msgstr ""
+
+msgctxt "#31001"
+msgid "General"
+msgstr ""
+
+msgctxt "#31002"
+msgid "Auto quality"
+msgstr ""
+
+msgctxt "#31003"
+msgid "Own quality"
+msgstr ""
+
+msgctxt "#31004"
+msgid "Number of items"
+msgstr ""
