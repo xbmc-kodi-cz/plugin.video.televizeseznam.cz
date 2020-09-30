@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<settings>
-    <category label="30006">
-        <setting label="30007" type="bool" id="best_quality" default="true"/>
-        <setting type="sep"/>
-        <setting label="30008" type="labelenum" id="lower_quality"  values="144p|240p|360p|480p|720p" enable="eq(-2,false)" default="720p" />
-    </category>
-</settings>
