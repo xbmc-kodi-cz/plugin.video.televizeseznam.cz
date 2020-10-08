@@ -147,7 +147,6 @@ def get_video(url):
 
     stream_server = data['data']['episode']['spl'].split('/')
     stream_data = _page(data['data']['episode']['spl']+'spl2,3,VOD')
-    list_item = xbmcgui.ListItem()
     if 'Location' in stream_data:
         stream_server = stream_data[u'Location'].split('/')
         stream_data = _page(stream_data[u'Location'])
@@ -155,10 +154,9 @@ def get_video(url):
         stream_source = stream_data['pls']['hls']['url'][2:].replace("|", "%7C")
     else:
         stream_source = stream_data['data']['mp4'][sorted(stream_data['data']['mp4'], key=lambda kv: kv[1], reverse=False)[0]]['url'][3:]
-    stream_url = '{}{}'.format('/'.join(stream_server[0:5]), stream_source)
+    stream_url = '{0}{1}'.format('/'.join(stream_server[0:5]), stream_source)
     list_item = xbmcgui.ListItem(path=stream_url)
     xbmcplugin.setResolvedUrl(plugin.handle, True, list_item)
-    xbmcplugin.endOfDirectory(plugin.handle)
 
 @plugin.route('/search/')
 def search():
