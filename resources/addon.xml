@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="plugin.video.televizeseznam.cz" name="Televize Seznam" version="1.1.1" provider-name="wombat">
+    <requires>
+        <import addon="xbmc.python" version="2.26.0" />
+        <import addon="script.module.requests" version="2.22.0" />
+        <import addon="script.module.routing" version="0.2.3" />
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="main.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="en_GB">Televize Seznam</summary>
+        <summary lang="cs_CZ">Televize Seznam</summary>
+        <description lang="en_GB">Internetová televize TelevizeSeznam.cz plná desítek originálních pořadů, videí a seriálů, které si pustíte, kdy chcete vy. Online i offline v aplikaci.</description>
+        <description lang="cs_CZ">Internetová televize TelevizeSeznam.cz plná desítek originálních pořadů, videí a seriálů, které si pustíte, kdy chcete vy. Online i offline v aplikaci.</description>
+        <source>https://github.com/wombat01/plugin.video.televizeseznam.cz</source>
+    <assets>
+        <icon>resources/icon.png</icon>
+    </assets>
+    <news>
+- Podpora HLS streamů
+    </news>
+    </extension>
+</addon>
