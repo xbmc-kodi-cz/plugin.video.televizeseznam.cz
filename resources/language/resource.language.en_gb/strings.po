@@ -37,13 +37,5 @@ msgid "General"
 msgstr ""
 
 msgctxt "#31002"
-msgid "Auto quality"
-msgstr ""
-
-msgctxt "#31003"
-msgid "Own quality"
-msgstr ""
-
-msgctxt "#31004"
 msgid "Number of items"
 msgstr ""

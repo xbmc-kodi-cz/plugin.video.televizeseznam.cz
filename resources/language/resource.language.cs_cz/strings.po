@@ -37,13 +37,5 @@ msgid "General"
 msgstr "Obecné"
 
 msgctxt "#31002"
-msgid "Auto quality"
-msgstr "Automatická kvalita"
-
-msgctxt "#31003"
-msgid "Own quality"
-msgstr "Vlastní kvalita"
-
-msgctxt "#31004"
 msgid "Number of items"
 msgstr "Počet položek"
