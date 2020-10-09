@@ -32,6 +32,10 @@ msgctxt "#30006"
 msgid "Go to show"
 msgstr ""
 
+msgctxt "#30007"
+msgid "Similar shows"
+msgstr ""
+
 msgctxt "#31001"
 msgid "General"
 msgstr ""

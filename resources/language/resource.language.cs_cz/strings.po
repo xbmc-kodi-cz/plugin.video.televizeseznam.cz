@@ -32,6 +32,10 @@ msgctxt "#30006"
 msgid "Go to show"
 msgstr "Přejít na pořad"
 
+msgctxt "#30007"
+msgid "Similar shows"
+msgstr "Související pořady"
+
 msgctxt "#31001"
 msgid "General"
 msgstr "Obecné"
