@@ -153,7 +153,7 @@ def get_video(url):
     if 'hls' in stream_data['pls']:
         stream_source = stream_data['pls']['hls']['url'][2:].replace("|", "%7C")
     else:
-        stream_source = stream_data['data']['mp4'][sorted(stream_data['data']['mp4'], key=lambda kv: kv[1], reverse=False)[0]]['url'][3:]
+        stream_source = stream_data['data']['mp4'][sorted(stream_data['data']['mp4'], key=lambda kv: kv[1], reverse=False)[0]]['url'][2:]
     stream_url = '{0}{1}'.format('/'.join(stream_server[0:5]), stream_source)
     list_item = xbmcgui.ListItem(path=stream_url)
     xbmcplugin.setResolvedUrl(plugin.handle, True, list_item)
