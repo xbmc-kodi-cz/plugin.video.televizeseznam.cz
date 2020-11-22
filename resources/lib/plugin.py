@@ -205,11 +205,11 @@ def search():
 def root():
     listing = []
 
-    listitem = xbmcgui.ListItem('[COLOR blue]Stream[/COLOR] · {0}'.format(_addon.getLocalizedString(30002).encode('utf-8')))
+    listitem = xbmcgui.ListItem('[COLOR blue]Stream[/COLOR] · {0}'.format(_addon.getLocalizedString(30002)))
     listitem.setArt({'icon': 'DefaultRecentlyAddedEpisodes.png'})
     listing.append((plugin.url_for(list_episodes_recent, 'VGFnOjI', 'stream', 'none', 'channel_episodes'), listitem, True))
 
-    listitem = xbmcgui.ListItem('[COLOR blue]Stream[/COLOR] · {0}'.format(_addon.getLocalizedString(30003).encode('utf-8')))
+    listitem = xbmcgui.ListItem('[COLOR blue]Stream[/COLOR] · {0}'.format(_addon.getLocalizedString(30003)))
     listitem.setArt({'icon': 'DefaultTVShows.png'})
     listing.append((plugin.url_for(list_channels, 'VGFnOjI', 'none'), listitem, True))
 
