@@ -55,7 +55,7 @@ def list_channels(id, type):
         listitem = xbmcgui.ListItem(name)
         listitem.setInfo('video', {'mediatype': 'tvshow', 'title': name, 'plot': item['perex']})
         listitem.setArt({'poster': _image(item['images'])})
-        menuitems.append((_addon.getLocalizedString(30007), 'XBMC.Container.Update('+plugin.url_for(list_channels, item['urlName'], 'related')+')'))
+        menuitems.append((_addon.getLocalizedString(30007), 'Container.Update('+plugin.url_for(list_channels, item['urlName'], 'related')+')'))
         listitem.addContextMenuItems(menuitems)
         listing.append((plugin.url_for(list_episodes,item['id'],item['urlName'],'none',item['category']), listitem, True))
 
@@ -137,8 +137,8 @@ def list_episodes_recent(id, urlname, page, category):
         listitem.setInfo('video', {'mediatype': 'episode', 'tvshowtitle': show_title, 'title': name, 'plot': item['perex'], 'duration': item['duration'], 'premiered': datetime.utcfromtimestamp(item['publish']).strftime('%Y-%m-%d')})
         listitem.setArt({'icon': _image(item['images'])})
         listitem.setProperty('IsPlayable', 'true')
-        menuitems.append((_addon.getLocalizedString(30006), 'XBMC.Container.Update('+plugin.url_for(list_episodes, item['originTag']['id'], item['originTag']['urlName'], 'none', item['originTag']['category'])+')'))
-        menuitems.append((_addon.getLocalizedString(30007), 'XBMC.Container.Update('+plugin.url_for(list_channels, item['originTag']['urlName'], 'related')+')'))
+        menuitems.append((_addon.getLocalizedString(30006), 'Container.Update('+plugin.url_for(list_episodes, item['originTag']['id'], item['originTag']['urlName'], 'none', item['originTag']['category'])+')'))
+        menuitems.append((_addon.getLocalizedString(30007), 'Container.Update('+plugin.url_for(list_channels, item['originTag']['urlName'], 'related')+')'))
         listitem.addContextMenuItems(menuitems)
         listing.append((plugin.url_for(get_video, item['urlName']), listitem, False))
     if(pageinfo['hasNextPage'] == True):
@@ -194,7 +194,7 @@ def search():
         listitem.setInfo('video', {'mediatype': 'episode', 'tvshowtitle': show_title, 'title': name, 'plot': name, 'duration': item['duration'], 'premiered': datetime.utcfromtimestamp(item['publish']).strftime('%Y-%m-%d')})
         listitem.setArt({'icon': _image(item['images'])})
         listitem.setProperty('IsPlayable', 'true')
-        menuitems.append((_addon.getLocalizedString(30006), 'XBMC.Container.Update('+plugin.url_for(list_episodes, item['originTag']['id'], item['originTag']['urlName'], 'none', item['originTag']['category'])+')'))
+        menuitems.append((_addon.getLocalizedString(30006), 'Container.Update('+plugin.url_for(list_episodes, item['originTag']['id'], item['originTag']['urlName'], 'none', item['originTag']['category'])+')'))
         listitem.addContextMenuItems(menuitems)
         listing.append((plugin.url_for(get_video, item['urlName']), listitem, False))
 
