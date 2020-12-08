@@ -1,0 +1,45 @@
+# Kodi Media Center language file
+# Addon Name: Televize Seznam
+# Addon id: plugin.video.televizeseznam.cz
+# Addon Provider: wombat
+msgid ""
+msgstr ""
+
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: sk\n"
+
+msgctxt "#30001"
+msgid "Next"
+msgstr "Ďalšie"
+
+msgctxt "#30002"
+msgid "Recent Videos"
+msgstr "Najnovšie videá"
+
+msgctxt "#30003"
+msgid "Shows"
+msgstr "Relácie"
+
+msgctxt "#30004"
+msgid "Categories"
+msgstr "Kategórie"
+
+msgctxt "#30005"
+msgid "Search"
+msgstr "Hľadať"
+
+msgctxt "#30006"
+msgid "Go to show"
+msgstr "Prejsť na reláciu"
+
+msgctxt "#30007"
+msgid "Similar shows"
+msgstr "Podobné relácie"
+
+msgctxt "#31001"
+msgid "General"
+msgstr "Všeobecné"
+
+msgctxt "#31002"
+msgid "Number of items"
+msgstr "Počet položiek"
