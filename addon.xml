@@ -12,8 +12,10 @@
         <platform>all</platform>
         <summary lang="en_GB">Televize Seznam</summary>
         <summary lang="cs_CZ">Televize Seznam</summary>
+        <summary lang="sk_SK">Televízia Seznam</summary>
         <description lang="en_GB">Internetová televize TelevizeSeznam.cz plná desítek originálních pořadů, videí a seriálů, které si pustíte, kdy chcete vy. Online i offline v aplikaci.</description>
         <description lang="cs_CZ">Internetová televize TelevizeSeznam.cz plná desítek originálních pořadů, videí a seriálů, které si pustíte, kdy chcete vy. Online i offline v aplikaci.</description>
+        <description lang="sk_SK">Internetová televízia TelevizeSeznam.cz obsahuje desiatky originálnych relácií, videí a seriálov, ktoré si pustíte vtedy, keď na to máte chuť. Online aj offline v aplikácii.</description>
         <source>https://github.com/wombat01/plugin.video.televizeseznam.cz</source>
     <assets>
         <icon>resources/icon.png</icon>
