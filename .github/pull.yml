@@ -1,0 +1,9 @@
+version: "1"
+rules:
+  - base: master
+    upstream: wombat01:master
+    mergeMethod: hardreset
+  - base: leia
+    upstream: wombat01:leia
+    mergeMethod: hardreset 
+    
