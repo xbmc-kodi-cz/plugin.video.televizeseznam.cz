@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.televizeseznam.cz" name="Televize Seznam" version="1.1.2" provider-name="wombat">
+<addon id="plugin.video.televizeseznam.cz" name="Televize Seznam" version="1.1.3" provider-name="wombat">
     <requires>
         <import addon="xbmc.python" version="2.26.0" />
         <import addon="script.module.requests" version="2.22.0" />
@@ -18,8 +18,7 @@
     <assets>
         <icon>resources/icon.png</icon>
     </assets>
-    <news>
--  Kontextové menu [Související pořady]
+    <news>Oprava zobrazení náhledů
     </news>
     </extension>
 </addon>

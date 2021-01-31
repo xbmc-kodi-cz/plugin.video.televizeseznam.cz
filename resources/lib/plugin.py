@@ -33,7 +33,7 @@ def list_channels(id, type):
     xbmcplugin.setContent(plugin.handle, 'tvshows')
     listing = []
     client = GraphQLClient()
-    
+
     if id == type == 'None':
         data = client.execute('''query LoadTags($limit :Int){tags(orderType:guide,category:[show],limit:$limit){...TagCardFragmentOnTag}tagsCount(category:[show])}fragment TagCardFragmentOnTag on Tag{id,dotId,name,category,perex,urlName,images{...DefaultFragmentOnImage},originTag{...DefaultOriginTagFragmentOnTag}}fragment DefaultFragmentOnImage on Image{usage,url}fragment DefaultOriginTagFragmentOnTag on Tag{id,dotId,name,urlName,category,images{...DefaultFragmentOnImage}}''', { 'limit': 500 })
         items = data['data']['tags']
@@ -43,7 +43,7 @@ def list_channels(id, type):
     else:
         data = client.execute('''query LoadChildTags($id :ID,$childTagsConnectionFirst :Int,$childTagsConnectionCategories :[Category]){tag(id:$id){childTagsConnection(categories:$childTagsConnectionCategories,first :$childTagsConnectionFirst){...TagCardsFragmentOnTagConnection}}}fragment TagCardsFragmentOnTagConnection on TagConnection{totalCount pageInfo{endCursor hasNextPage}edges{node{...TagCardFragmentOnTag}}}fragment TagCardFragmentOnTag on Tag{id,dotId,name,category,perex,urlName,images{...DefaultFragmentOnImage},originTag{...DefaultOriginTagFragmentOnTag}}fragment DefaultFragmentOnImage on Image{usage,url}fragment DefaultOriginTagFragmentOnTag on Tag{id,dotId,name,urlName,category,images{...DefaultFragmentOnImage}}''', { 'id': id, 'childTagsConnectionFirst': 500, 'childTagsConnectionCategories': ['show'] })
         items = data['data']['tag']['childTagsConnection']['edges']
-        
+
     for item in items:
         menuitems = []
         if 'None' not in id and 'None' in type:
@@ -231,8 +231,8 @@ def root():
 
 def _image(data):
     if data:
-        image = list([x for x in data if x['usage']=='poster' or x['usage'] == 'square'])
-        return 'https:{0}'.format(image[0]['url'])
+        image = list(filter(lambda x:x['usage']=='poster' or x['usage'] == 'square', data))[0]['url']
+        return image if "://" in image else "https://" + image
 
 def _page(url):
     r = requests.get(url, headers={'Content-type': 'application/json', 'Accept': 'application/json'})
