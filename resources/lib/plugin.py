@@ -234,8 +234,8 @@ def root():
 
 def _image(data):
     if data:
-        image = list(filter(lambda x:x['usage']=='poster' or x['usage'] == 'square', data))
-        return 'https:{0}'.format(image[0]['url'])
+        image = list(filter(lambda x:x['usage']=='poster' or x['usage'] == 'square', data))[0]['url']
+        return image if "://" in image else "https://" + image
 
 def _page(url):
     r = requests.get(url, headers={'Content-type': 'application/json', 'Accept': 'application/json'})
