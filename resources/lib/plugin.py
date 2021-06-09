@@ -8,7 +8,7 @@ import xbmcaddon
 import json
 from datetime import datetime
 
-_apiurl = 'https://api.televizeseznam.cz/graphql'
+_apiurl = 'https://api.stream.cz/graphql'
 
 _addon = xbmcaddon.Addon()
 _lang = _addon.getLocalizedString

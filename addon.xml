@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.televizeseznam.cz" name="Televize Seznam" version="1.2.3" provider-name="wombat">
+<addon id="plugin.video.televizeseznam.cz" name="Stream" version="1.2.4" provider-name="wombat">
     <requires>
         <import addon="xbmc.python" version="3.0.0" />
         <import addon="script.module.requests" version="2.22.0" />
@@ -10,17 +10,17 @@
     </extension>
     <extension point="xbmc.addon.metadata">
         <platform>all</platform>
-        <summary lang="en_GB">Televize Seznam</summary>
-        <summary lang="cs_CZ">Televize Seznam</summary>
-        <summary lang="sk_SK">Televízia Seznam</summary>
-        <description lang="en_GB">Internetová televize TelevizeSeznam.cz plná desítek originálních pořadů, videí a seriálů, které si pustíte, kdy chcete vy. Online i offline v aplikaci.</description>
-        <description lang="cs_CZ">Internetová televize TelevizeSeznam.cz plná desítek originálních pořadů, videí a seriálů, které si pustíte, kdy chcete vy. Online i offline v aplikaci.</description>
-        <description lang="sk_SK">Internetová televízia TelevizeSeznam.cz obsahuje desiatky originálnych relácií, videí a seriálov, ktoré si pustíte vtedy, keď na to máte chuť. Online aj offline v aplikácii.</description>
+        <summary lang="en_GB">Stream</summary>
+        <summary lang="cs_CZ">Stream</summary>
+        <summary lang="sk_SK">Stream Seznam</summary>
+        <description lang="cs_CZ">Internetová televize Stream plná desítek originálních pořadů, videí a seriálů, které si pustíte, kdy chcete vy. Online i offline v aplikaci.</description>
+        <description lang="en_GB">Internetová televize Stream plná desítek originálních pořadů, videí a seriálů, které si pustíte, kdy chcete vy. Online i offline v aplikaci.</description>
+        <description lang="sk_SK">Internetová televízia Stream obsahuje desiatky originálnych relácií, videí a seriálov, ktoré si pustíte vtedy, keď na to máte chuť. Online aj offline v aplikácii.</description>
         <source>https://github.com/wombat01/plugin.video.televizeseznam.cz</source>
     <assets>
-        <icon>resources/icon.png</icon>
+        <icon>resources/icon-new.png</icon>
     </assets>
-    <news>Oprava zobrazení náhledů
+    <news>Změna názvu
     </news>
     </extension>
 </addon>
