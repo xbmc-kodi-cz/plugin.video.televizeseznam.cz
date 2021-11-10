@@ -1,3 +1,3 @@
-# Televize Seznam
+# Stream
 
-Video doplněk do [Kodi](http://www.kodi.tv/) pro přehrávání videí z [TelevizeSeznam.cz](https://www.televizeseznam.cz).
+Video doplněk do [Kodi](http://www.kodi.tv/) pro přehrávání videí z [Stream](https://www.stream.cz).
