@@ -13,7 +13,7 @@ msgid "Next"
 msgstr ""
 
 msgctxt "#30002"
-msgid "Recent Videos"
+msgid "Recent videos"
 msgstr ""
 
 msgctxt "#30003"
@@ -34,6 +34,10 @@ msgstr ""
 
 msgctxt "#30007"
 msgid "Similar shows"
+msgstr ""
+
+msgctxt "#30008"
+msgid "Most viewed videos"
 msgstr ""
 
 msgctxt "#31001"

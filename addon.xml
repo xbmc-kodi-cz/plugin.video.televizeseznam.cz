@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.televizeseznam.cz" name="Stream" version="1.2.4" provider-name="wombat">
+<addon id="plugin.video.televizeseznam.cz" name="Stream" version="1.2.5" provider-name="wombat">
     <requires>
         <import addon="xbmc.python" version="3.0.0" />
         <import addon="script.module.requests" version="2.22.0" />
@@ -17,10 +17,12 @@
         <description lang="en_GB">Internetová televize Stream plná desítek originálních pořadů, videí a seriálů, které si pustíte, kdy chcete vy. Online i offline v aplikaci.</description>
         <description lang="sk_SK">Internetová televízia Stream obsahuje desiatky originálnych relácií, videí a seriálov, ktoré si pustíte vtedy, keď na to máte chuť. Online aj offline v aplikácii.</description>
         <source>https://github.com/wombat01/plugin.video.televizeseznam.cz</source>
-    <assets>
-        <icon>resources/icon-new.png</icon>
-    </assets>
-    <news>Změna názvu
-    </news>
+        <assets>
+            <icon>resources/icon-white.png</icon>
+        </assets>
+        <news>
+        • Přidána sekce nejsledovanější videa
+        • Logo
+        </news>
     </extension>
 </addon>
