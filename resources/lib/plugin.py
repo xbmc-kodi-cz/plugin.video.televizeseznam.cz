@@ -8,18 +8,16 @@ import xbmcaddon
 import json
 from datetime import datetime
 
-_apiurl = 'https://api.stream.cz/graphql'
-
 _addon = xbmcaddon.Addon()
 plugin = routing.Plugin()
 
 
-@plugin.route('/list_categories/')
+@plugin.route('/list_categories')
 def list_categories():
     xbmcplugin.addSortMethod(
         plugin.handle, sortMethod=xbmcplugin.SORT_METHOD_LABEL)
     listing = []
-    client = GraphQLClient(_apiurl)
+    client = GraphQLClient()
     data = client.execute(
         '''query LoadTags($limit :Int){tags(inGuide:true,limit:$limit){...NavigationCategoryFragmentOnTag}tagsCount(inGuide:true)}fragment NavigationCategoryFragmentOnTag on Tag{id,name,category,urlName}''', {'limit': 20})
 
@@ -40,7 +38,7 @@ def list_channels(id, type):
         plugin.handle, sortMethod=xbmcplugin.SORT_METHOD_LABEL)
     xbmcplugin.setContent(plugin.handle, 'tvshows')
     listing = []
-    client = GraphQLClient(_apiurl)
+    client = GraphQLClient()
 
     if 'none' in id and 'none' in type:
         data = client.execute(
@@ -68,17 +66,17 @@ def list_channels(id, type):
             30007), 'Container.Update('+plugin.url_for(list_channels, item['urlName'], 'related')+')'))
         listitem.addContextMenuItems(menuitems)
         listing.append((plugin.url_for(
-            list_episodes, item['id'], item['urlName'], 'none', item['category'], 'none'), listitem, True))
+            list_episodes, item['id'], item['urlName'], 'none', item['category']), listitem, True))
 
     xbmcplugin.addDirectoryItems(plugin.handle, listing, len(listing))
     xbmcplugin.endOfDirectory(plugin.handle)
 
 
-@plugin.route('/list_episodes/<id>/<urlname>/<page>/<category>/<showname>')
-def list_episodes(id, urlname, page, category, showname):
+@plugin.route('/list_episodes/<id>/<urlname>/<page>/<category>')
+def list_episodes(id, urlname, page, category):
     xbmcplugin.setContent(plugin.handle, 'episodes')
     listing = []
-    client = GraphQLClient(_apiurl)
+    client = GraphQLClient()
     if page == 'none':
         query = '''query LoadTag($urlName :String,$episodesConnectionFirst :Int){tagData:tag(urlName:$urlName,category:'''+category+'''){...ShowDetailFragmentOnTag episodesConnection(first :$episodesConnectionFirst){...SeasonEpisodeCardsFragmentOnEpisodeItemConnection}}}fragment ShowDetailFragmentOnTag on Tag{id dotId name category urlName favouritesCount perex images{...DefaultFragmentOnImage}bannerAdvert{...DefaultFragmentOnBannerAdvert},originServiceTag{...OriginServiceTagFragmentOnTag}}fragment SeasonEpisodeCardsFragmentOnEpisodeItemConnection on EpisodeItemConnection{totalCount pageInfo{endCursor hasNextPage}edges{node{...SeasonEpisodeCardFragmentOnEpisode}}}fragment DefaultFragmentOnImage on Image{usage,url}fragment DefaultFragmentOnBannerAdvert on BannerAdvert{section}fragment OriginServiceTagFragmentOnTag on Tag{id,dotId,name,urlName,category,invisible,images{...DefaultFragmentOnImage}}fragment SeasonEpisodeCardFragmentOnEpisode on Episode{id dotId name namePrefix perex duration images{...DefaultFragmentOnImage}urlName originTag{...DefaultOriginTagFragmentOnTag}publish views}fragment DefaultOriginTagFragmentOnTag on Tag{id,dotId,name,urlName,category,images{...DefaultFragmentOnImage}}'''
         params = {'urlName': urlname,
@@ -93,10 +91,6 @@ def list_episodes(id, urlname, page, category, showname):
         item = item['node']
         name = item['name'].strip()
 
-        if showname == 'true':
-            name = '[COLOR blue]{0}[/COLOR] · {1}'.format(
-                item['originTag']['name'], name)
-
         listitem = xbmcgui.ListItem(name)
         listitem.setInfo('video', {'mediatype': 'episode', 'tvshowtitle': item['originTag']['name'], 'title': name, 'plot': item[
                          'perex'], 'duration': item['duration'], 'premiered': datetime.utcfromtimestamp(item['publish']).strftime('%Y-%m-%d')})
@@ -104,20 +98,22 @@ def list_episodes(id, urlname, page, category, showname):
         listitem.setProperty('IsPlayable', 'true')
         listing.append(
             (plugin.url_for(get_video, item['urlName']), listitem, False))
+
     if(data['data']['tagData']['episodesConnection']['pageInfo']['hasNextPage'] == True):
         listitem = xbmcgui.ListItem(_addon.getLocalizedString(30001))
         listing.append((plugin.url_for(list_episodes, id, urlname,
-                       data['data']['tagData']['episodesConnection']['pageInfo']['endCursor'], category, 'none'), listitem, True))
+                       data['data']['tagData']['episodesConnection']['pageInfo']['endCursor'], category), listitem, True))
 
     xbmcplugin.addDirectoryItems(plugin.handle, listing, len(listing))
     xbmcplugin.endOfDirectory(plugin.handle)
 
 
-@ plugin.route('/list_episodes_recent/<id>/<urlname>/<page>/<category>/')
+@ plugin.route('/list_episodes_recent/<id>/<urlname>/<page>/<category>')
 def list_episodes_recent(id, urlname, page, category):
+
     xbmcplugin.setContent(plugin.handle, 'episodes')
     listing = []
-    client = GraphQLClient(_apiurl)
+    client = GraphQLClient()
     if 'none' in (id, page) and category == 'episodes':
         query = '''query LoadTags($limit :Int,$episodesConnectionFirst :Int){tags(listing:homepage,limit:$limit){...TimelineBoxFragmentOnTag episodesConnection(first :$episodesConnectionFirst){...EpisodeCardsFragmentOnEpisodeItemConnection}}tagsCount(listing:homepage)}fragment TimelineBoxFragmentOnTag on Tag{id,dotId,name,urlName,category,originTag{...DefaultOriginTagFragmentOnTag}}fragment EpisodeCardsFragmentOnEpisodeItemConnection on EpisodeItemConnection{totalCount pageInfo{endCursor hasNextPage}edges{node{...EpisodeCardFragmentOnEpisode}}}fragment DefaultOriginTagFragmentOnTag on Tag{id,dotId,name,urlName,category,images{...DefaultFragmentOnImage}}fragment EpisodeCardFragmentOnEpisode on Episode{id dotId name perex duration images{...DefaultFragmentOnImage}urlName originTag{...DefaultOriginTagFragmentOnTag}publish views}fragment DefaultFragmentOnImage on Image{usage,url}'''
 
@@ -128,10 +124,19 @@ def list_episodes_recent(id, urlname, page, category):
         pageinfo = data['data']['tags'][0]['episodesConnection']['pageInfo']
         id = data['data']['tags'][0]['id']
 
-    if not 'none' in (page) and category == 'episodes' or category == 'tag':
+    if not 'none' in (page) and category == 'episodes':
         query = '''query LoadTag($id :ID,$episodesConnectionAfter :String,$episodesConnectionFirst :Int){tagData:tag(id:$id){episodesConnection(after:$episodesConnectionAfter,first :$episodesConnectionFirst){...SeasonEpisodeCardsFragmentOnEpisodeItemConnection}}}fragment SeasonEpisodeCardsFragmentOnEpisodeItemConnection on EpisodeItemConnection{totalCount pageInfo{endCursor hasNextPage}edges{node{...SeasonEpisodeCardFragmentOnEpisode}}}fragment SeasonEpisodeCardFragmentOnEpisode on Episode{id dotId name namePrefix perex duration images{...DefaultFragmentOnImage}urlName originTag{...DefaultOriginTagFragmentOnTag}publish views}fragment DefaultFragmentOnImage on Image{usage,url}fragment DefaultOriginTagFragmentOnTag on Tag{id,dotId,name,urlName,category,images{...DefaultFragmentOnImage}}'''
 
         params = {'id': id, 'episodesConnectionAfter': page,
+                  'episodesConnectionFirst': _addon.getSetting('limit')}
+        data = client.execute(query, params)
+        items = data['data']['tagData']['episodesConnection']['edges']
+        pageinfo = data['data']['tagData']['episodesConnection']['pageInfo']
+
+    if category == 'tag':
+        query = '''query LoadTag($urlName :String,$episodesConnectionFirst :Int){tagData:tag(urlName:$urlName,category:'''+category+'''){...ShowDetailFragmentOnTag episodesConnection(first :$episodesConnectionFirst){...SeasonEpisodeCardsFragmentOnEpisodeItemConnection}}}fragment ShowDetailFragmentOnTag on Tag{id dotId name category urlName favouritesCount perex images{...DefaultFragmentOnImage}bannerAdvert{...DefaultFragmentOnBannerAdvert},originServiceTag{...OriginServiceTagFragmentOnTag}}fragment SeasonEpisodeCardsFragmentOnEpisodeItemConnection on EpisodeItemConnection{totalCount pageInfo{endCursor hasNextPage}edges{node{...SeasonEpisodeCardFragmentOnEpisode}}}fragment DefaultFragmentOnImage on Image{usage,url}fragment DefaultFragmentOnBannerAdvert on BannerAdvert{section}fragment OriginServiceTagFragmentOnTag on Tag{id,dotId,name,urlName,category,invisible,images{...DefaultFragmentOnImage}}fragment SeasonEpisodeCardFragmentOnEpisode on Episode{id dotId name namePrefix perex duration images{...DefaultFragmentOnImage}urlName originTag{...DefaultOriginTagFragmentOnTag}publish views}fragment DefaultOriginTagFragmentOnTag on Tag{id,dotId,name,urlName,category,images{...DefaultFragmentOnImage}}'''
+
+        params = {'urlName': urlname,
                   'episodesConnectionFirst': _addon.getSetting('limit')}
         data = client.execute(query, params)
         items = data['data']['tagData']['episodesConnection']['edges']
@@ -160,6 +165,7 @@ def list_episodes_recent(id, urlname, page, category):
         item = item['node']
         show_title = item['originTag']['name']
         name = item['name'].strip()
+
         listitem = xbmcgui.ListItem(
             u'[COLOR blue]{0}[/COLOR] · {1}'.format(show_title, name))
         listitem.setInfo('video', {'mediatype': 'episode', 'tvshowtitle': show_title, 'title': name,
@@ -167,12 +173,13 @@ def list_episodes_recent(id, urlname, page, category):
         listitem.setArt({'icon': _image(item['images'])})
         listitem.setProperty('IsPlayable', 'true')
         menuitems.append((_addon.getLocalizedString(30006), 'Container.Update('+plugin.url_for(list_episodes,
-                         item['originTag']['id'], item['originTag']['urlName'], 'none', item['originTag']['category'], 'none')+')'))
+                         item['originTag']['id'], item['originTag']['urlName'], 'none', item['originTag']['category'])+')'))
         menuitems.append((_addon.getLocalizedString(30007), 'Container.Update(' +
                          plugin.url_for(list_channels, item['originTag']['urlName'], 'related')+')'))
         listitem.addContextMenuItems(menuitems)
         listing.append(
             (plugin.url_for(get_video, item['urlName']), listitem, False))
+
     if(pageinfo['hasNextPage'] == True):
         listitem = xbmcgui.ListItem(_addon.getLocalizedString(30001))
         listing.append((plugin.url_for(list_episodes_recent, id, urlname,
@@ -184,14 +191,17 @@ def list_episodes_recent(id, urlname, page, category):
 
 @ plugin.route('/get_video/<url>')
 def get_video(url):
-    client = GraphQLClient(_apiurl)
+    client = GraphQLClient()
     data = client.execute('''query LoadEpisode($urlName :String){episode(urlName:$urlName){...VideoDetailFragmentOnEpisode}}fragment VideoDetailFragmentOnEpisode on Episode{id dotId dotOriginalService originalId name perex duration images{...DefaultFragmentOnImage}spl commentsDisabled productPlacement urlName originUrl originTag{...OriginTagInfoFragmentOnTag}advertEnabled adverts{...DefaultFragmentOnAdvert}bannerAdvert{...DefaultFragmentOnBannerAdvert}views publish links{...DefaultFragmentOnLinks}recommendedAbVariant sklikRetargeting}fragment DefaultFragmentOnImage on Image{usage,url}fragment OriginTagInfoFragmentOnTag on Tag{id,dotId,name,urlName,category,invisible,images{...DefaultFragmentOnImage}}fragment DefaultFragmentOnAdvert on Advert{zoneId section collocation position rollType}fragment DefaultFragmentOnBannerAdvert on BannerAdvert{section}fragment DefaultFragmentOnLinks on Link{label,url}''', {'urlName': url})
 
     stream_server = data['data']['episode']['spl'].split('/')
-    stream_data = _page(data['data']['episode']['spl']+'spl2,3,VOD')
+    stream_data = client._get(
+        data['data']['episode']['spl']+'spl2,3,VOD')
+
     if 'Location' in stream_data:
         stream_server = stream_data[u'Location'].split('/')
-        stream_data = _page(stream_data[u'Location'])
+        stream_data = client._get(stream_data[u'Location'])
+
     if 'hls' in stream_data['pls']:
         stream_source = stream_data['pls']['hls']['url'][2:].replace(
             "|", "%7C")
@@ -203,16 +213,18 @@ def get_video(url):
     xbmcplugin.setResolvedUrl(plugin.handle, True, listitem)
 
 
-@ plugin.route('/search/')
+@ plugin.route('/search')
 def search():
     xbmcplugin.setContent(plugin.handle, 'episodes')
     listing = []
     input = xbmc.Keyboard('', _addon.getLocalizedString(30005))
     input.doModal()
+
     if not input.isConfirmed():
         return
+
     query = input.getText()
-    client = GraphQLClient(_apiurl)
+    client = GraphQLClient()
     data = client.execute('''query Search($query : String) { searchEpisode(query : $query) { ...EpisodeCardFragmentOnEpisode } searchTag(query : $query) { ...TagCardFragmentOnTag } } fragment EpisodeCardFragmentOnEpisode on Episode { id dotId name duration images { ...DefaultFragmentOnImage } urlName originTag { ...DefaultOriginTagFragmentOnTag } publish views spl }  fragment TagCardFragmentOnTag on Tag { id dotId name category perex urlName images { ...DefaultFragmentOnImage }, originTag { ...DefaultOriginTagFragmentOnTag } }  fragment DefaultFragmentOnImage on Image { usage, url }  fragment DefaultOriginTagFragmentOnTag on Tag { id dotId name urlName category images { ...DefaultFragmentOnImage }}''', {'query': query})
 
     for item in data['data']['searchTag']:
@@ -221,7 +233,7 @@ def search():
         listitem.setInfo('video', {'tvshowtitle': name, 'plot': item['perex']})
         listitem.setArt({'poster': _image(item['images'])})
         listing.append((plugin.url_for(
-            list_episodes, item['id'], item['urlName'], 'none', item['category'], 'none'), listitem, True))
+            list_episodes, item['id'], item['urlName'], 'none', item['category']), listitem, True))
 
     for item in data['data']['searchEpisode']:
         menuitems = []
@@ -234,7 +246,7 @@ def search():
         listitem.setArt({'icon': _image(item['images'])})
         listitem.setProperty('IsPlayable', 'true')
         menuitems.append((_addon.getLocalizedString(30006), 'Container.Update('+plugin.url_for(list_episodes,
-                         item['originTag']['id'], item['originTag']['urlName'], 'none', item['originTag']['category'], 'none')+')'))
+                         item['originTag']['id'], item['originTag']['urlName'], 'none', item['originTag']['category'])+')'))
         listitem.addContextMenuItems(menuitems)
         listing.append(
             (plugin.url_for(get_video, item['urlName']), listitem, False))
@@ -266,8 +278,8 @@ def root():
 
     listitem = xbmcgui.ListItem(_addon.getLocalizedString(30008))
     listitem.setArt({'icon': 'DefaultTVShows.png'})
-    listing.append((plugin.url_for(
-        list_episodes, 'VGFnOjEyNDk1OTY', 'nejsledovanejsi-videa-1249596', 'none', 'tag', 'true'), listitem, True))
+    listing.append((plugin.url_for(list_episodes_recent, 'VGFnOjEyNDk1OTY',
+                   'nejsledovanejsi-videa-1249596', 'none', 'tag'), listitem, True))
 
     listitem = xbmcgui.ListItem(_addon.getLocalizedString(30003))
     listitem.setArt({'icon': 'DefaultTVShows.png'})
@@ -293,15 +305,12 @@ def _image(data):
         return image if "://" in image else "https://" + image
 
 
-def _page(url):
-    r = requests.get(
-        url, headers={'Content-type': 'application/json', 'Accept': 'application/json'})
-    return r.json()
-
-
 class GraphQLClient:
-    def __init__(self, endpoint):
-        self.endpoint = endpoint
+
+    def __init__(self):
+        self.endpoint = 'https://api.stream.cz/graphql'
+        self.headers = {'Content-Type': 'application/json',
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.35 Safari/537.36'}
 
     def execute(self, query, variables=None):
         return self._send(query, variables)
@@ -309,10 +318,12 @@ class GraphQLClient:
     def _send(self, query, variables):
         data = {'query': query,
                 'variables': json.dumps(variables)}
-        headers = {'Accept': 'application/json',
-                   'Content-Type': 'application/json'}
         r = requests.post(
-            self.endpoint, data=json.dumps(data), headers=headers)
+            self.endpoint, data=json.dumps(data), headers=self.headers)
+        return r.json()
+
+    def _get(self, url):
+        r = requests.get(url, self.headers)
         return r.json()
 
 
