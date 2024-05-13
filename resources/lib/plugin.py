@@ -93,7 +93,7 @@ def list_episodes(id, urlname, page, category):
     xbmcplugin.setContent(plugin.handle, 'episodes')
     listing = []
     client = GraphQLClient()
-    if page == 'none':
+    if page == 'none' or 'None':
         query = '''query LoadTag($urlName :String,$episodesConnectionFirst :Int){tagData:tag(urlName:$urlName,category:''' + category + '''){...ShowDetailFragmentOnTag episodesConnection(first :$episodesConnectionFirst){...SeasonEpisodeCardsFragmentOnEpisodeItemConnection}}}fragment ShowDetailFragmentOnTag on Tag{id dotId name category urlName favouritesCount perex images{...DefaultFragmentOnImage}bannerAdvert{...DefaultFragmentOnBannerAdvert},originServiceTag{...OriginServiceTagFragmentOnTag}}fragment SeasonEpisodeCardsFragmentOnEpisodeItemConnection on EpisodeItemConnection{totalCount pageInfo{endCursor hasNextPage}edges{node{...SeasonEpisodeCardFragmentOnEpisode}}}fragment DefaultFragmentOnImage on Image{usage,url}fragment DefaultFragmentOnBannerAdvert on BannerAdvert{section}fragment OriginServiceTagFragmentOnTag on Tag{id,dotId,name,urlName,category,invisible,images{...DefaultFragmentOnImage}}fragment SeasonEpisodeCardFragmentOnEpisode on Episode{id dotId name namePrefix perex duration images{...DefaultFragmentOnImage}urlName originTag{...DefaultOriginTagFragmentOnTag}publish views}fragment DefaultOriginTagFragmentOnTag on Tag{id,dotId,name,urlName,category,images{...DefaultFragmentOnImage}}'''
         params = {
             'urlName': urlname,
