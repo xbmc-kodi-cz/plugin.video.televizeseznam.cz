@@ -37,7 +37,7 @@ msgid "Similar shows"
 msgstr ""
 
 msgctxt "#30008"
-msgid "Most viewed videos"
+msgid "Trending videos"
 msgstr ""
 
 msgctxt "#31001"
