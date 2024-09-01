@@ -37,8 +37,8 @@ msgid "Similar shows"
 msgstr "Související pořady"
 
 msgctxt "#30008"
-msgid "Most viewed videos"
-msgstr "Nejsledovanější videa"
+msgid "Trending videos"
+msgstr "Trendující videa"
 
 msgctxt "#31001"
 msgid "General"
