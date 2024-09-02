@@ -37,8 +37,12 @@ msgid "Similar shows"
 msgstr "Podobné relácie"
 
 msgctxt "#30008"
-msgid "Most viewed videos"
-msgstr "Najsledovanejšie videá"
+msgid "Trending videos"
+msgstr "Trendujúce videá"
+
+msgctxt "#30009"
+msgid "Nothing found"
+msgstr "Nič nenájdené"
 
 msgctxt "#31001"
 msgid "General"
