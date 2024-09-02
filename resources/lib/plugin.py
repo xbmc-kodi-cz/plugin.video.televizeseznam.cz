@@ -251,7 +251,7 @@ def list_episodes_recent(id, urlname, page, category):
                 "title": name,
                 "plot": item["perex"],
                 "duration": item["duration"],
-                "premiered": datetime.utcfromtimestamp(item["publish"]).strftime(
+                "premiered": datetime.fromtimestamp(item["publish"]).strftime(
                     "%Y-%m-%d"
                 ),
             },
@@ -338,7 +338,7 @@ def get_video(url):
 
 @plugin.route("/search")
 def show_search():
-    input = xbmc.Keyboard("", "Hledat")
+    input = xbmc.Keyboard("", _addon.getLocalizedString(30005))
     input.doModal()
     if not input.isConfirmed():
         return
