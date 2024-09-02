@@ -133,7 +133,7 @@ def list_episodes(id, urlname, page, category):
                 "title": name,
                 "plot": item["perex"],
                 "duration": item["duration"],
-                "premiered": datetime.utcfromtimestamp(item["publish"]).strftime(
+                "premiered": datetime.fromtimestamp(item["publish"]).strftime(
                     "%Y-%m-%d"
                 ),
             },
@@ -307,6 +307,7 @@ def get_video(url):
         {"urlName": url},
     )
 
+    item = data["data"]["episode"]
     stream_server = data["data"]["episode"]["spl"].split("/")
     stream_data = client._get(data["data"]["episode"]["spl"] + "spl2,3,VOD")
 
@@ -321,82 +322,112 @@ def get_video(url):
             sorted(stream_data["data"]["mp4"], key=lambda kv: kv[1], reverse=False)[0]
         ]["url"][2:]
     stream_url = "{0}{1}".format("/".join(stream_server[0:5]), stream_source)
+
     listitem = xbmcgui.ListItem(path=stream_url)
+    listitem.setInfo(
+        "video",
+        {
+            "title": item["name"],
+            "plot": item["perex"],
+        },
+    )
+    listitem.setArt({"thumb": _image(item["images"])})
+
     xbmcplugin.setResolvedUrl(plugin.handle, True, listitem)
 
 
 @plugin.route("/search")
-def search():
-    xbmcplugin.setContent(plugin.handle, "episodes")
-    listing = []
-    input = xbmc.Keyboard("", _addon.getLocalizedString(30005))
+def show_search():
+    input = xbmc.Keyboard("", "Hledat")
     input.doModal()
-
     if not input.isConfirmed():
         return
-
-    query = input.getText()
-    client = GraphQLClient()
-    data = client.execute(
-        """query Search($query : String) { searchEpisode(query : $query) { ...EpisodeCardFragmentOnEpisode } searchTag(query : $query) { ...TagCardFragmentOnTag } } fragment EpisodeCardFragmentOnEpisode on Episode { id dotId name duration images { ...DefaultFragmentOnImage } urlName originTag { ...DefaultOriginTagFragmentOnTag } publish views spl }  fragment TagCardFragmentOnTag on Tag { id dotId name category perex urlName images { ...DefaultFragmentOnImage }, originTag { ...DefaultOriginTagFragmentOnTag } }  fragment DefaultFragmentOnImage on Image { usage, url }  fragment DefaultOriginTagFragmentOnTag on Tag { id dotId name urlName category images { ...DefaultFragmentOnImage }}""",
-        {"query": query},
-    )
-
-    for item in data["data"]["searchTag"]:
-        name = item["name"].strip()
-        listitem = xbmcgui.ListItem(name)
-        listitem.setInfo("video", {"tvshowtitle": name, "plot": item["perex"]})
-        listitem.setArt({"poster": _image(item["images"])})
-        listing.append(
-            (
-                plugin.url_for(
-                    list_episodes, item["id"], item["urlName"], "none", item["category"]
-                ),
-                listitem,
-                True,
-            )
-        )
-
-    for item in data["data"]["searchEpisode"]:
-        menuitems = []
-        show_title = item["originTag"]["name"]
-        name = item["name"].strip()
-        title_label = "[COLOR blue]{0}[/COLOR] · {1}".format(show_title, name)
-        listitem = xbmcgui.ListItem(title_label)
-        listitem.setInfo(
-            "video",
-            {
-                "mediatype": "episode",
-                "tvshowtitle": show_title,
-                "title": name,
-                "plot": name,
-                "duration": item["duration"],
-                "premiered": datetime.utcfromtimestamp(item["publish"]).strftime(
-                    "%Y-%m-%d"
-                ),
-            },
-        )
-        listitem.setArt({"thumb": _image(item["images"])})
-        listitem.setProperty("IsPlayable", "true")
-        menuitems.append(
-            (
-                _addon.getLocalizedString(30006),
-                "Container.Update("
-                + plugin.url_for(
-                    list_episodes,
-                    item["originTag"]["id"],
-                    item["originTag"]["urlName"],
-                    "none",
-                    item["originTag"]["category"],
-                )
-                + ")",
-            )
-        )
-        listitem.addContextMenuItems(menuitems)
-        listing.append((plugin.url_for(get_video, item["urlName"]), listitem, False))
-
-    xbmcplugin.addDirectoryItems(plugin.handle, listing, len(listing))
+    search_url = plugin.url_for(list_search, input.getText())
+    xbmc.executebuiltin(f"Container.Update({search_url})")
     xbmcplugin.endOfDirectory(plugin.handle)
+    list_search(input.getText())
+
+
+@plugin.route("/list_search/<query>")
+def list_search(query):
+    xbmcplugin.setContent(plugin.handle, "episodes")
+    if query:
+        client = GraphQLClient()
+        data = client.execute(
+            """query Search($query : String) { searchEpisode(query : $query) { ...EpisodeCardFragmentOnEpisode } searchTag(query : $query) { ...TagCardFragmentOnTag } } fragment EpisodeCardFragmentOnEpisode on Episode { id dotId name duration images { ...DefaultFragmentOnImage } urlName originTag { ...DefaultOriginTagFragmentOnTag } publish views spl }  fragment TagCardFragmentOnTag on Tag { id dotId name category perex urlName images { ...DefaultFragmentOnImage }, originTag { ...DefaultOriginTagFragmentOnTag } }  fragment DefaultFragmentOnImage on Image { usage, url }  fragment DefaultOriginTagFragmentOnTag on Tag { id dotId name urlName category images { ...DefaultFragmentOnImage }}""",
+            {"query": query},
+        )
+        listing = []
+
+        if data["data"]["searchTag"] or data["data"]["searchEpisode"]:
+            for item in data["data"]["searchTag"]:
+                name = item["name"].strip()
+                listitem = xbmcgui.ListItem(name)
+                listitem.setInfo("video", {"tvshowtitle": name, "plot": item["perex"]})
+                listitem.setArt({"poster": _image(item["images"])})
+                listing.append(
+                    (
+                        plugin.url_for(
+                            list_episodes,
+                            item["id"],
+                            item["urlName"],
+                            "none",
+                            item["category"],
+                        ),
+                        listitem,
+                        True,
+                    )
+                )
+
+            for item in data["data"]["searchEpisode"]:
+                menuitems = []
+                show_title = item["originTag"]["name"]
+                name = item["name"].strip()
+                title_label = "[COLOR blue]{0}[/COLOR] · {1}".format(show_title, name)
+                listitem = xbmcgui.ListItem(title_label)
+                listitem.setInfo(
+                    "video",
+                    {
+                        "mediatype": "episode",
+                        "tvshowtitle": show_title,
+                        "title": name,
+                        "plot": name,
+                        "duration": item["duration"],
+                        "premiered": datetime.fromtimestamp(item["publish"]).strftime(
+                            "%Y-%m-%d"
+                        ),
+                    },
+                )
+                listitem.setArt({"thumb": _image(item["images"])})
+                listitem.setProperty("IsPlayable", "true")
+                menuitems.append(
+                    (
+                        _addon.getLocalizedString(30006),
+                        "Container.Update("
+                        + plugin.url_for(
+                            list_episodes,
+                            item["originTag"]["id"],
+                            item["originTag"]["urlName"],
+                            "none",
+                            item["originTag"]["category"],
+                        )
+                        + ")",
+                    )
+                )
+                listitem.addContextMenuItems(menuitems)
+                listing.append(
+                    (plugin.url_for(get_video, item["urlName"]), listitem, False)
+                )
+
+            xbmcplugin.addDirectoryItems(plugin.handle, listing, len(listing))
+            xbmcplugin.endOfDirectory(plugin.handle)
+        else:
+            xbmcgui.Dialog().notification(
+                _addon.getAddonInfo("name"),
+                _addon.getLocalizedString(30009),
+                xbmcgui.NOTIFICATION_INFO,
+                5000,
+            )
 
 
 @plugin.route("/")
@@ -463,7 +494,7 @@ def root():
 
     listitem = xbmcgui.ListItem(_addon.getLocalizedString(30005))
     listitem.setArt({"icon": "DefaultAddonsSearch.png"})
-    listing.append((plugin.url_for(search), listitem, True))
+    listing.append((plugin.url_for(show_search), listitem, True))
 
     xbmcplugin.addDirectoryItems(plugin.handle, listing, len(listing))
     xbmcplugin.endOfDirectory(plugin.handle)

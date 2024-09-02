@@ -40,6 +40,10 @@ msgctxt "#30008"
 msgid "Trending videos"
 msgstr "Trendující videa"
 
+msgctxt "#30009"
+msgid "Nothing found"
+msgstr "Nic nenalezeno"
+
 msgctxt "#31001"
 msgid "General"
 msgstr "Obecné"
