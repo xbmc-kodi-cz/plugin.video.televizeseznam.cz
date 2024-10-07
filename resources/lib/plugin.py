@@ -101,7 +101,7 @@ def list_episodes(id, urlname, page, category):
     xbmcplugin.setContent(plugin.handle, "episodes")
     listing = []
     client = GraphQLClient()
-    if page == "none" or "None":
+    if page == "none":
         query = (
             """query LoadTag($urlName :String,$episodesConnectionFirst :Int){tagData:tag(urlName:$urlName,category:"""
             + category
