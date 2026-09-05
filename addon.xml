@@ -7,7 +7,6 @@
     </requires>
     <extension point="xbmc.python.pluginsource" library="main.py">
         <provides>video</provides>
-        <reuselanguageinvoker>true</reuselanguageinvoker>
     </extension>
     <extension point="xbmc.addon.metadata">
         <platform>all</platform>
