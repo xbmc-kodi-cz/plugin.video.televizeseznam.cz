@@ -1,27 +1,28 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.televizeseznam.cz" name="Stream" version="1.2.10" provider-name="wombat">
+<addon id="plugin.video.televizeseznam.cz" name="Stream" version="1.3.0" provider-name="wombat">
     <requires>
         <import addon="xbmc.python" version="3.0.1" />
-        <import addon="script.module.requests" version="2.22.0" />
+        <import addon="script.module.requests" version="2.27.1" />
         <import addon="script.module.routing" version="0.2.3" />
     </requires>
     <extension point="xbmc.python.pluginsource" library="main.py">
         <provides>video</provides>
+        <reuselanguageinvoker>true</reuselanguageinvoker>
     </extension>
     <extension point="xbmc.addon.metadata">
         <platform>all</platform>
         <summary lang="en_GB">Stream</summary>
         <summary lang="cs_CZ">Stream</summary>
         <summary lang="sk_SK">Stream</summary>
-        <description lang="cs_CZ">Videoportál Stream plný stovek originálních pořadů, seriálů a filmů dostupných online i offline.</description>
-        <description lang="en_GB">Videoportál Stream plný stovek originálních pořadů, seriálů a filmů dostupných online i offline.</description>
-        <description lang="sk_SK">Videoportál Stream plný stovek originálních pořadů, seriálů a filmů dostupných online i offline.</description>
+        <description lang="cs_CZ">Internetová televize, filmy, seriály a videa online zdarma | Stream</description>
+        <description lang="en_GB">Internetová televize, filmy, seriály a videa online zdarma | Stream</description>
+        <description lang="sk_SK">Internetová televize, filmy, seriály a videa online zdarma | Stream</description>
         <source>https://github.com/wombat01/plugin.video.televizeseznam.cz</source>
         <assets>
             <icon>resources/icon-white.png</icon>
         </assets>
         <news>
-        Oprava stránkování
+        Navigace nyní kopíruje menu stream.cz (Hlavní nabídka, Filmy, Seriály, Pohádky, Zábava) včetně sezón u pořadů.
         </news>
     </extension>
 </addon>

@@ -12,18 +12,6 @@ msgctxt "#30001"
 msgid "Next"
 msgstr "Ďalšie"
 
-msgctxt "#30002"
-msgid "Recent videos"
-msgstr "Najnovšie videá"
-
-msgctxt "#30003"
-msgid "Shows"
-msgstr "Relácie"
-
-msgctxt "#30004"
-msgid "Categories"
-msgstr "Kategórie"
-
 msgctxt "#30005"
 msgid "Search"
 msgstr "Hľadať"
@@ -36,13 +24,53 @@ msgctxt "#30007"
 msgid "Similar shows"
 msgstr "Podobné relácie"
 
-msgctxt "#30008"
-msgid "Trending videos"
-msgstr "Trendujúce videá"
-
 msgctxt "#30009"
 msgid "Nothing found"
 msgstr "Nič nenájdené"
+
+msgctxt "#30010"
+msgid "An unexpected error occurred"
+msgstr "Vyskytla sa neočakávaná chyba"
+
+msgctxt "#30012"
+msgid "Content not found"
+msgstr "Obsah sa nenašiel"
+
+msgctxt "#30013"
+msgid "All episodes"
+msgstr "Všetky epizódy"
+
+msgctxt "#30014"
+msgid "This video is not available"
+msgstr "Toto video nie je dostupné"
+
+msgctxt "#30015"
+msgid "Views"
+msgstr "Zhliadnutia"
+
+msgctxt "#30016"
+msgid "New search"
+msgstr "Nové hľadanie"
+
+msgctxt "#30017"
+msgid "Remove from history"
+msgstr "Odobrať z histórie"
+
+msgctxt "#30018"
+msgid "Clear search history"
+msgstr "Vymazať históriu hľadania"
+
+msgctxt "#30019"
+msgid "Similar videos"
+msgstr "Podobné videá"
+
+msgctxt "#30022"
+msgid "Cache cleared"
+msgstr "Vyrovnávacia pamäť vymazaná"
+
+msgctxt "#30023"
+msgid "Featured"
+msgstr "Výber"
 
 msgctxt "#31001"
 msgid "General"
@@ -51,3 +79,72 @@ msgstr "Všeobecné"
 msgctxt "#31002"
 msgid "Number of items"
 msgstr "Počet položiek"
+
+msgctxt "#31005"
+msgid "Search ordering"
+msgstr "Zoradenie výsledkov hľadania"
+
+msgctxt "#31006"
+msgid "Relevance"
+msgstr "Relevancia"
+
+msgctxt "#31007"
+msgid "Newest"
+msgstr "Najnovšie"
+
+msgctxt "#31008"
+msgid "Most watched"
+msgstr "Najsledovanejšie"
+
+msgctxt "#31009"
+msgid "Oldest"
+msgstr "Najstaršie"
+
+msgctxt "#31011"
+msgid "Fixed qualities play a progressive MP4, which starts almost instantly. The adaptive stream adjusts to your connection but takes several seconds to begin."
+msgstr "Pevné kvality prehrávajú progresívne MP4, ktoré nabehne takmer okamžite. Adaptívny stream sa prispôsobí linke, ale rozbieha sa niekoľko sekúnd."
+
+msgctxt "#31012"
+msgid "Playback quality"
+msgstr "Kvalita prehrávania"
+
+msgctxt "#31014"
+msgid "Automatic (highest)"
+msgstr "Automaticky (najvyššia)"
+
+msgctxt "#31018"
+msgid "1080p"
+msgstr "1080p"
+
+msgctxt "#31019"
+msgid "720p"
+msgstr "720p"
+
+msgctxt "#31020"
+msgid "480p"
+msgstr "480p"
+
+msgctxt "#31021"
+msgid "360p"
+msgstr "360p"
+
+msgctxt "#31023"
+msgid "Adaptive stream (slower start)"
+msgstr "Adaptívny stream (pomalší štart)"
+
+msgctxt "#31022"
+msgid "240p"
+msgstr "240p"
+
+msgctxt "#31024"
+msgid "Clear cache"
+msgstr "Vymazať vyrovnávaciu pamäť"
+
+msgctxt "#31026"
+msgid "Cache data"
+msgstr "Ukladať dáta do vyrovnávacej pamäte"
+
+msgctxt "#31027"
+msgid "Keeps menus and category descriptions on disk so they load instantly. Turning it off makes every screen fetch from the server again."
+msgstr "Drží menu a popisy kategórií na disku, takže sa načítajú okamžite. Po vypnutí sa každá obrazovka sťahuje zo servera znova."
+

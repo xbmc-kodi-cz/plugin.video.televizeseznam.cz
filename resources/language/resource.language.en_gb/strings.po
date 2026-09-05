@@ -12,18 +12,6 @@ msgctxt "#30001"
 msgid "Next"
 msgstr ""
 
-msgctxt "#30002"
-msgid "Recent videos"
-msgstr ""
-
-msgctxt "#30003"
-msgid "Shows"
-msgstr ""
-
-msgctxt "#30004"
-msgid "Categories"
-msgstr ""
-
 msgctxt "#30005"
 msgid "Search"
 msgstr ""
@@ -36,12 +24,52 @@ msgctxt "#30007"
 msgid "Similar shows"
 msgstr ""
 
-msgctxt "#30008"
-msgid "Trending videos"
-msgstr ""
-
 msgctxt "#30009"
 msgid "Nothing found"
+msgstr ""
+
+msgctxt "#30010"
+msgid "An unexpected error occurred"
+msgstr ""
+
+msgctxt "#30012"
+msgid "Content not found"
+msgstr ""
+
+msgctxt "#30013"
+msgid "All episodes"
+msgstr ""
+
+msgctxt "#30014"
+msgid "This video is not available"
+msgstr ""
+
+msgctxt "#30015"
+msgid "Views"
+msgstr ""
+
+msgctxt "#30016"
+msgid "New search"
+msgstr ""
+
+msgctxt "#30017"
+msgid "Remove from history"
+msgstr ""
+
+msgctxt "#30018"
+msgid "Clear search history"
+msgstr ""
+
+msgctxt "#30019"
+msgid "Similar videos"
+msgstr ""
+
+msgctxt "#30022"
+msgid "Cache cleared"
+msgstr ""
+
+msgctxt "#30023"
+msgid "Featured"
 msgstr ""
 
 msgctxt "#31001"
@@ -51,3 +79,72 @@ msgstr ""
 msgctxt "#31002"
 msgid "Number of items"
 msgstr ""
+
+msgctxt "#31005"
+msgid "Search ordering"
+msgstr ""
+
+msgctxt "#31006"
+msgid "Relevance"
+msgstr ""
+
+msgctxt "#31007"
+msgid "Newest"
+msgstr ""
+
+msgctxt "#31008"
+msgid "Most watched"
+msgstr ""
+
+msgctxt "#31009"
+msgid "Oldest"
+msgstr ""
+
+msgctxt "#31011"
+msgid "Fixed qualities play a progressive MP4, which starts almost instantly. The adaptive stream adjusts to your connection but takes several seconds to begin."
+msgstr ""
+
+msgctxt "#31012"
+msgid "Playback quality"
+msgstr ""
+
+msgctxt "#31014"
+msgid "Automatic (highest)"
+msgstr ""
+
+msgctxt "#31018"
+msgid "1080p"
+msgstr ""
+
+msgctxt "#31019"
+msgid "720p"
+msgstr ""
+
+msgctxt "#31020"
+msgid "480p"
+msgstr ""
+
+msgctxt "#31021"
+msgid "360p"
+msgstr ""
+
+msgctxt "#31023"
+msgid "Adaptive stream (slower start)"
+msgstr ""
+
+msgctxt "#31022"
+msgid "240p"
+msgstr ""
+
+msgctxt "#31024"
+msgid "Clear cache"
+msgstr ""
+
+msgctxt "#31026"
+msgid "Cache data"
+msgstr ""
+
+msgctxt "#31027"
+msgid "Keeps menus and category descriptions on disk so they load instantly. Turning it off makes every screen fetch from the server again."
+msgstr ""
+
